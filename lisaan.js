@@ -278,7 +278,7 @@ function lvQuiz(L){var all=L.w.concat(L.s);var qs=shuffle(all).slice(0,10).map(f
 function viewLevels(){
   D.lv=D.lv||{};
   if(S.lvl){var L=LV.filter(function(l){return l.id===S.lvl;})[0];
-    return '<button class="btn back" data-act="back">← All levels</button><div class="lead"><h1>'+L.icon+' '+esc(L.title)+' <span class="ar" lang="ar" style="color:var(--primary)">'+esc(L.ar)+'</span></h1><p>'+esc(L.desc)+'</p></div>'+
+    return '<button class="btn back" data-act="back">← All levels</button><div class="lead"><h1>'+L.icon+' '+esc(L.title)+' <span class="ar" lang="ar" style="color:var(--primary)">'+esc(L.ar)+'</span></h1><p>'+esc(L.desc)+'</p><button class="btn primary" data-act="lvQuiz" data-id="'+L.id+'" style="font-size:17px;padding:11px 20px">Take the '+esc(L.title)+' quiz</button></div>'+
     '<h2 class="lvh">Words</h2><div class="lvlist words">'+L.w.map(lvItem).join('')+'</div>'+
     '<h2 class="lvh">Sentences</h2><div class="lvlist">'+L.s.map(lvItem).join('')+'</div>'+
     '<p style="margin-top:20px"><button class="btn primary" data-act="lvQuiz" data-id="'+L.id+'" style="font-size:18px;padding:12px 22px">Take the '+esc(L.title)+' quiz</button></p>';}

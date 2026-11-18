@@ -382,3 +382,29 @@ html{scrollbar-color:color-mix(in oklab,var(--primary) 35%,transparent) transpar
 .qfoot .why{margin:0}
 .qfoot .btn{width:100%;font-size:18px;padding:13px 18px;justify-content:center}
 @media(max-width:760px){.qfoot{bottom:calc(78px + env(safe-area-inset-bottom))}}
+
+/* Speed: only lay out cards that are on (or near) the screen */
+.grid>.card{content-visibility:auto;contain-intrinsic-size:auto 200px}
+
+/* Phones: lesson example tables become stacked cards (no sideways swiping) */
+@media(max-width:760px){
+  .tw{overflow-x:visible}
+  .tw table,.tw tbody{display:block;width:100%}
+  .tw tr:first-child{display:none}
+  .tw tr{display:grid;grid-template-columns:1fr auto;grid-template-areas:"ar say" "mean mean" "tr tr";gap:2px 10px;align-items:center;padding:12px 4px;border-bottom:1px solid var(--line)}
+  .tw tr:last-child{border-bottom:0}
+  .tw td{display:block;padding:0;border:0;min-width:0;overflow-wrap:anywhere}
+  .tw td.ar{grid-area:ar;text-align:right;font-size:26px;line-height:1.7}
+  .tw td:last-child{grid-area:say;justify-self:end}
+  .tw td:first-child{grid-area:mean;font-weight:800}
+  .tw td.tr{grid-area:tr;color:var(--muted);font-size:14px}
+  .panel table{max-width:100%}
+  .panel td{overflow-wrap:anywhere}
+}
+@media(max-width:760px){
+  .tw td.ar,.panel td.ar{white-space:normal;word-break:normal;overflow-wrap:anywhere}
+}
+
+/* Keep space under the page so the last buttons are never hidden behind the phone menu */
+#main{padding-bottom:60px}
+@media(max-width:760px){#main{padding-bottom:calc(120px + env(safe-area-inset-bottom))}}
