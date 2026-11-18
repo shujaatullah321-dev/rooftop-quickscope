@@ -350,6 +350,7 @@ function viewGrammar(){
   (nx?'<p class="note">Next topic to study: <button class="linkbtn" data-act="g_topic" data-id="'+nx.id+'">'+nx.icon+' '+esc(nx.title)+'</button></p>':'<p class="note">Maa shaa Allah, every topic is mastered. Keep them fresh with the daily workout.</p>')+'</div>'+
   '<h2 class="lvh">All topics</h2><div class="grid">'+GRAM.map(function(t,i){var s=gStat(t.id),l=gLevel(t.id);
     return '<button class="card'+(l===3?' done':'')+'" data-act="g_topic" data-id="'+t.id+'"><span class="n">TOPIC '+(i+1)+'</span><h3>'+t.icon+' '+esc(t.title)+'</h3><span class="ar" lang="ar">'+esc(t.ar)+'</span>'+pctBar(s.b,l===3?'ok':l===1?'warn':'')+gStatus(t.id)+'</button>';}).join('')+'</div>';}
+function gNextBtn(G){return '<button class="btn primary" data-act="g_next">'+(G.i===G.items.length-1?'See result':'Next question')+' →</button>';}
 function viewGDrill(){var G=S.gd;
   if(G.end){var pct=Math.round(G.score/G.items.length*100);
     return '<div class="q panel result" style="text-align:center"><h2>'+esc(G.title)+'</h2><div class="score">'+G.score+' / '+G.items.length+'</div><p style="font-weight:800;font-size:20px">'+(pct===100?'Maa shaa Allah, perfect!':pct>=70?'Well done!':'Keep going. Read the rule again and retry.')+'</p>'+
@@ -362,15 +363,14 @@ function viewGDrill(){var G=S.gd;
     '<div class="gbuild'+(G.checked?(it.ok?' right':' wrong'):'')+'" dir="rtl" lang="ar">'+(it.built.length?it.built.map(function(ti,j){return '<button class="gw" data-act="g_unt" data-k="'+j+'" data-ns'+(G.checked?' disabled':'')+'>'+esc(it.tiles[ti].w)+'</button>';}).join(''):'<span class="ph">Tap the words below</span>')+'</div>'+
     '<div class="gtiles" dir="rtl" lang="ar">'+it.tiles.map(function(x,k){return '<button class="gw" data-act="g_tile" data-k="'+k+'" data-ns'+(x.used||G.checked?' disabled':'')+'>'+esc(x.w)+'</button>';}).join('')+'</div>';
     if(!G.checked)body+='<div class="btnrow"><button class="btn primary" data-act="g_check"'+(it.built.length===it.words.length?'':' disabled')+'>Check <kbd>↵</kbd></button><button class="btn" data-act="g_clear">Clear</button></div>';
-    else body+='<div class="why">'+(it.ok?'✅ Correct. ':'❌ Not quite. The right order is: ')+'<span class="ar" lang="ar" style="font-size:24px">'+esc(it.words.join(' '))+'</span> '+sayBtn(it.words.join(' '))+'</div>';
+    else body+='<div class="qfoot'+(it.ok?' ok':' no')+'"><div class="why">'+(it.ok?'✅ Correct. ':'❌ Not quite. The right order is: ')+'<span class="ar" lang="ar" style="font-size:24px">'+esc(it.words.join(' '))+'</span> '+sayBtn(it.words.join(' '))+'</div>';if(G.checked)body+=gNextBtn(G)+'</div>';
   }else{
     body+=(it.type==='f'?'<h2>This sentence has a mistake. Which version is correct?</h2><div class="gwrong ar" lang="ar">'+esc(it.q)+'</div>':'<h2 style="margin-top:8px">'+mix(it.q)+'</h2>')+
     '<div class="opts">'+it.o.map(function(o,k){var a=AR.test(o),cls='opt'+(a?' ar':'')+(G.checked&&k===it.a?' right':'')+(G.checked&&k===G.pick&&k!==it.a?' wrong':'');
       return '<button class="'+cls+'" data-act="g_pick" data-k="'+k+'" data-ns'+(G.checked?' disabled':'')+(a?' lang="ar"':'')+'><kbd>'+(k+1)+'</kbd><span>'+esc(o)+'</span></button>';}).join('')+'</div>';
-    if(G.checked)body+='<div class="why">'+(it.ok?'✅ Correct. ':'❌ Not quite. ')+mix(it.why)+'</div>';
+    if(G.checked)body+='<div class="qfoot'+(it.ok?' ok':' no')+'"><div class="why">'+(it.ok?'✅ Correct. ':'❌ Not quite. ')+mix(it.why)+'</div>'+gNextBtn(G)+'</div>';
     else body+='<p class="hint">Tip: press 1–'+it.o.length+' to answer</p>';
   }
-  if(G.checked)body+='<button class="btn primary" data-act="g_next">'+(G.i===G.items.length-1?'See result':'Next')+' <kbd>↵</kbd></button>';
   return '<button class="btn back" data-act="g_exit">← Stop</button><div class="q"><div class="prog"><i style="width:'+(G.i/G.items.length*100)+'%"></i></div><div class="panel">'+body+'</div></div>';}
 
 /* ---------- vocabulary trainer (spaced repetition) ---------- */
@@ -428,7 +428,7 @@ function viewVDrill(){var V=S.vt;
   (q.m==='meaning'||(q.m==='listen'&&ans)?'<div class="big-ar ar" lang="ar">'+esc(q.w[0])+' '+sayBtn(q.w[0])+'</div>':q.m==='listen'?'<div style="text-align:center;margin:14px 0"><button class="btn primary bigsay" data-act="say" data-t="'+esc(q.w[0])+'">🔊 Play the word</button></div>':'')+
   '<div class="opts">'+q.o.map(function(o,k){var a=AR.test(o),cls='opt'+(a?' ar':'')+(ans&&k===q.a?' right':'')+(ans&&k===V.pick&&k!==q.a?' wrong':'');
     return '<button class="'+cls+'" data-act="v_pick" data-k="'+k+'" data-ns'+(ans?' disabled':'')+(a?' lang="ar"':'')+'><kbd>'+(k+1)+'</kbd><span>'+esc(o)+'</span></button>';}).join('')+'</div>'+
-  (ans?'<div class="why">'+(V.pick===q.a?'✅ Correct. ':'❌ Not quite. ')+'<span class="ar" lang="ar">'+esc(q.w[0])+'</span> ('+esc(q.w[1])+') means “'+esc(q.w[2])+'”.</div><button class="btn primary" data-act="v_next">'+(V.i===V.words.length-1?'See result':'Next')+' <kbd>↵</kbd></button>':'<p class="hint">Tip: press 1–'+q.o.length+' to answer</p>')+'</div></div>';}
+  (ans?'<div class="qfoot'+(V.pick===q.a?' ok':' no')+'"><div class="why">'+(V.pick===q.a?'✅ Correct. ':'❌ Not quite. ')+'<span class="ar" lang="ar">'+esc(q.w[0])+'</span> ('+esc(q.w[1])+') means “'+esc(q.w[2])+'”.</div><button class="btn primary" data-act="v_next">'+(V.i===V.words.length-1?'See result':'Next word')+' →</button></div>':'<p class="hint">Tip: press 1–'+q.o.length+' to answer</p>')+'</div></div>';}
 
 /* ---------- my progress ---------- */
 function histDays(n){var a=[];for(var i=n-1;i>=0;i--){var k=today(i),v=(D.hist&&D.hist[k])||0;a.push([k,v,D.days.indexOf(k)>=0]);}return a;}
@@ -482,7 +482,7 @@ function impAct(a,el,id,k){var G=S.gd,V=S.vt;
   else if(a==='v_snext'&&V){if(V.i===V.words.length-1){V.phase='quiz';V.i=0;V.words=shuffle(V.words);V.q=vQ(V.words[0]);render();if(V.q.m==='listen')say(V.q.w[0]);return;}V.i++;render();say(V.words[V.i][0]);return;}
   else if(a==='v_pick'&&V&&V.pick<0){V.pick=k;var ok=k===V.q.a,was=(vE(V.q.w[0])||[0])[0];vMark(V.q.w,ok);if(ok){V.score++;V.up++;sfx('ok');}else{V.down++;sfx('bad');}
     trk('quiz_answered',{kind:'vocab_trainer',question_number:V.i+1,correct:ok});save();if(ok&&was<4&&vE(V.q.w[0])[0]>=4)toast('Word mastered: '+V.q.w[2]);}
-  else if(a==='v_next'&&V&&V.pick>=0){if(V.i===V.words.length-1)vFinish();else{V.i++;V.pick=-1;V.q=vQ(V.words[V.i]);render();if(V.q.m==='listen')say(V.q.w[0]);return;}}
+  else if(a==='v_next'&&V&&V.pick>=0){if(V.i===V.words.length-1)vFinish();else{V.i++;V.pick=-1;V.q=vQ(V.words[V.i]);render();scrollTo(0,0);if(V.q.m==='listen')say(V.q.w[0]);return;}}
   else if(a==='v_again'&&V){vStart(V.title,shuffle(V.words),false,V.ref);return;}
   else if(a==='v_exit'){S.vt=null;}
   else if(a==='p_acct'){var b=document.getElementById('acctBtn');if(b)b.click();return;}
@@ -525,7 +525,7 @@ function viewQuiz(){
   (q.big?'<div class="big-ar ar" lang="ar">'+esc(q.big)+' '+sayBtn(q.big)+'</div>':'')+
   '<div class="opts">'+q.o.map(function(o,k){var kb='<kbd>'+(k+1)+'</kbd>';var cls='opt'+(AR.test(o)?' ar':'')+(ans&&k===q.a?' right':'')+(ans&&k===Q.pick&&k!==q.a?' wrong':'');
     return '<button class="'+cls+'" data-act="pick" data-k="'+k+'"'+(ans?' disabled':'')+(AR.test(o)?' lang="ar"':'')+'>'+kb+'<span>'+esc(o)+'</span></button>';}).join('')+'</div>'+
-  (ans?'<div class="why">'+(Q.pick===q.a?'✅ Correct. ':'❌ Not quite. ')+mix(q.why)+'</div><button class="btn primary" data-act="next">'+(Q.i===Q.qs.length-1?'See result':'Next')+' <kbd>↵</kbd></button>':'<p class="hint">Tip: press 1–'+q.o.length+' to answer</p>')+'</div></div>';
+  (ans?'<div class="qfoot'+(Q.pick===q.a?' ok':' no')+'"><div class="why">'+(Q.pick===q.a?'✅ Correct. ':'❌ Not quite. ')+mix(q.why)+'</div><button class="btn primary" data-act="next">'+(Q.i===Q.qs.length-1?'See result':'Next question')+' →</button></div>':'<p class="hint">Tip: press 1–'+q.o.length+' to answer</p>')+'</div></div>';
 }
 function finishQuiz(){
   var Q=S.quiz,pct=Math.round(Q.score/Q.qs.length*100),xp=Q.score*10,msg='';trk('quiz_completed',{kind:String(Q.kind),score:Q.score,question_count:Q.qs.length,percent:pct,passed:pct>=70});
@@ -887,7 +887,7 @@ document.addEventListener('click',function(e){
     startQuiz(a==='mixed'?'Mixed challenge':'Grammar quiz',qs,a==='mixed'?'mixed':'grammar');return;}
   else if(a==='lib'){startLib(+id);return;}
   else if(a==='pick'&&Q&&Q.pick<0){Q.pick=k;var ok=k===Q.qs[Q.i].a;trk('quiz_answered',{kind:String(Q.kind),question_number:Q.i+1,correct:ok});if(ok){Q.score++;sfx('ok');}else sfx('bad');}
-  else if(a==='next'&&Q){if(Q.i===Q.qs.length-1)finishQuiz();else{Q.i++;Q.pick=-1;}}
+  else if(a==='next'&&Q){if(Q.i===Q.qs.length-1)finishQuiz();else{Q.i++;Q.pick=-1;}scrollTo(0,0);}
   else if(a==='quizAgain'&&Q){var kind=Q.kind,ref=Q.ref;S.quiz=null;
     if(kind==='lesson'){S.lesson=ref;var L2=LESSONS.filter(function(l){return l.id===ref;})[0];startQuiz(L2.title,shuffle(L2.q).map(makeQ),'lesson',ref);}
     else if(kind==='set'){S.set=ref;var s2=SETS.filter(function(s){return s.id===ref;})[0];startQuiz(s2.title,shuffle(s2.w).slice(0,8).map(function(w){return vocabQ(s2.w,w);}),'set',ref);}
