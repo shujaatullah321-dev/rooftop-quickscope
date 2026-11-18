@@ -196,7 +196,24 @@ function mix(s){ /* wrap Arabic runs inside mixed text */
 function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=(Math.random()*(i+1))|0,t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function sample(a,n,not){return shuffle(a.filter(function(x){return x!==not;})).slice(0,n);}
 var canSay=false;try{canSay='speechSynthesis' in window&&typeof SpeechSynthesisUtterance!=='undefined';}catch(e){}
-function say(t){if(!canSay)return;try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t.replace(/[←·\/١-٩٠]/g,' '));u.lang='ar-SA';u.rate=.75;speechSynthesis.speak(u);}catch(e){}}
+/* Pronunciation voice: prefer a male Arabic voice; if the device has none, use a deeper version of its voice. */
+var VKEY='lisan-voice',arVoices=[],voicePick=null,voiceChosen=false;
+var MALE_V=/(maged|majed|tarik|naayf|hamed|shakir|hamdan|bassel|taim|fahed|rami|omar|jamal|abdullah|moaz|laith|hedi|saleh|ismael|\bali\b|ar-xa-x-arc|ar-xa-x-ard|\bmale\b)/i;
+var FEMALE_V=/(laila|layla|mariam|amira|zariyah|hoda|salma|fatima|sana|rana|iman|noura|mouna|amany|reem|amal|hala|female|ar-xa-x-arz|ar-xa-x-are)/i;
+function isMaleV(v){var n=v.name+' '+(v.voiceURI||'');return MALE_V.test(n)&&!FEMALE_V.test(v.name);}
+function vScore(v){var n=v.name+' '+(v.voiceURI||''),s=0;if(isMaleV(v))s+=100;if(/natural|neural|online|enhanced|premium/i.test(n))s+=20;if(/ar[-_]SA/i.test(v.lang))s+=5;if(v.localService)s+=1;return s;}
+function loadVoices(){try{arVoices=speechSynthesis.getVoices().filter(function(v){return /^ar/i.test(v.lang);});}catch(e){arVoices=[];}
+  var saved='';try{saved=localStorage.getItem(VKEY)||'';}catch(e){}
+  var c=arVoices.filter(function(v){return v.name===saved;})[0];voiceChosen=!!c;
+  voicePick=c||arVoices.filter(isMaleV).sort(function(a,b){return vScore(b)-vScore(a);})[0]||null;}
+if(canSay){loadVoices();try{speechSynthesis.addEventListener('voiceschanged',function(){loadVoices();if(typeof S!=='undefined'&&S.view==='progress'&&!S.quiz)render();});}catch(e){}}
+function say(t){if(!canSay)return;try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t.replace(/[←→·\/١-٩٠]/g,' '));u.lang=voicePick?voicePick.lang:'ar-SA';u.rate=.75;if(voicePick)u.voice=voicePick;if(!voiceChosen&&!(voicePick&&isMaleV(voicePick)))u.pitch=.7;speechSynthesis.speak(u);}catch(e){}}
+function voicePanel(){if(!canSay)return '';var male=arVoices.filter(isMaleV),saved='';try{saved=localStorage.getItem(VKEY)||'';}catch(e){}
+  var note=voicePick&&isMaleV(voicePick)?'Using a male voice: '+esc(voicePick.name)+'.':'This device has no male Arabic voice, so the app uses a deeper version of its Arabic voice. iPhone, Mac and Windows usually have a male one.';
+  return '<div class="panel"><h2>🔊 Pronunciation voice</h2><p>Tap any Arabic word or sentence in the app to hear it. '+note+'</p>'+
+  '<div class="btnrow" style="align-items:flex-end"><label class="vsel">Voice <select id="voiceSel"><option value="">Automatic (male when available)</option>'+arVoices.map(function(v){return '<option value="'+esc(v.name)+'"'+(v.name===saved?' selected':'')+'>'+(isMaleV(v)?'♂ ':'')+esc(v.name)+' ('+esc(v.lang)+')</option>';}).join('')+'</select></label>'+
+  '<button class="btn" data-act="say" data-t="السَّلَامُ عَلَيْكُمْ، كَيْفَ حَالُكَ؟">▶ Test the voice</button></div>'+(male.length?'':'')+'</div>';}
+addEventListener('change',function(e){if(e.target&&e.target.id==='voiceSel'){try{if(e.target.value)localStorage.setItem(VKEY,e.target.value);else localStorage.removeItem(VKEY);}catch(x){}loadVoices();say('السَّلَامُ عَلَيْكُمْ');render();}});
 function sayBtn(t){return canSay?'<button class="say" data-act="say" data-t="'+esc(t)+'" aria-label="Listen">🔊</button>':'';}
 var toastT=null;
 function toast(m){var t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('on');},1800);}
@@ -424,7 +441,7 @@ function viewProgress(){
   return '<div class="lead"><h1>My progress</h1><p>'+(U?'Everything you do is saved to your own account.':'You are learning as a guest on this device.')+'</p></div>'+
   '<div class="panel acctbox">'+(U?'<p>👤 Signed in as <b>'+esc(U.name||U.email||'you')+'</b>. Only you can see this progress, and it follows you to any phone or computer you sign in on.</p><button class="btn" data-act="p_acct">Account</button>':
     '<p>👤 Sign in or create a free account so your progress is saved to <b>your own</b> account. Each person who signs in sees only their own progress.</p><button class="btn primary" data-act="p_acct">Sign in or create account</button>')+'</div>'+
-  '<div class="tiles">'+tile(D.xp,'XP')+tile(LEVELS[l][1],'level')+tile('🔥 '+streak(),'day streak')+tile(D.days.length,'days learned')+'</div>'+
+  voicePanel()+'<div class="tiles">'+tile(D.xp,'XP')+tile(LEVELS[l][1],'level')+tile('🔥 '+streak(),'day streak')+tile(D.days.length,'days learned')+'</div>'+
   '<div class="panel"><h2>Last 14 days</h2><div class="chart" role="img" aria-label="XP earned on each of the last 14 days">'+h.map(function(x,i){var p=x[1]?Math.max(6,x[1]/mx*100):(x[2]?6:0);var d=x[0].split('-');
     return '<div class="col'+(x[1]>=GOAL?' met':'')+'" title="'+x[0]+': '+x[1]+' XP"><i style="height:'+p+'%"></i><span>'+(i===13?'Today':d[2])+'</span></div>';}).join('')+'</div><p class="note">Daily goal: '+GOAL+' XP. Gold bars mean the goal was met.</p></div>'+
   '<div class="panel"><h2>Course progress</h2>'+
@@ -842,7 +859,7 @@ function render(){
   var m=$('main');
   m.innerHTML=S.quiz?viewQuiz():S.view==='grammar'?viewGrammar():S.view==='vocab'?viewVocab():S.view==='progress'?viewProgress():S.view==='levels'?viewLevels():S.view==='words'?viewWords():S.view==='quiz'?viewQuizHome():S.view==='kids'?viewKids():S.view==='library'?viewLibrary():S.view==='rewards'?viewRewards():viewLearn();
   var links=document.querySelectorAll('nav a');
-  for(var i=0;i<links.length;i++){if(links[i].getAttribute('data-v')===S.view)links[i].setAttribute('aria-current','page');else links[i].removeAttribute('aria-current');}
+  for(var i=0;i<links.length;i++){if(links[i].getAttribute('data-v')===S.view)links[i].setAttribute('aria-current','page');else links[i].removeAttribute('aria-current');}var nmb=document.querySelector('.navmore');if(nmb)nmb.classList.toggle('cur',!!document.querySelector('nav a.nm[aria-current]'));
   header();
   
 }
@@ -891,4 +908,15 @@ document.addEventListener('click',function(e){
   render();
 });
 route();
+
+/* Phone menu: 4 main tabs + "More" sheet for the rest */
+(function(){var nav=document.querySelector('nav');if(!nav||nav.querySelector('.navmore'))return;var MORE=['levels','quiz','kids','library','rewards','progress'];
+  var as=nav.querySelectorAll('a');for(var i=0;i<as.length;i++)if(MORE.indexOf(as[i].getAttribute('data-v'))>=0)as[i].classList.add('nm');
+  var b=document.createElement('button');b.type='button';b.className='navmore';b.setAttribute('aria-expanded','false');b.innerHTML='<span class="ni" aria-hidden="true">☰</span>More';nav.appendChild(b);
+  function close(){nav.classList.remove('open');b.setAttribute('aria-expanded','false');}
+  b.addEventListener('click',function(e){e.stopPropagation();var o=nav.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');});
+  nav.addEventListener('click',function(e){if(e.target.closest('a'))close();});
+  document.addEventListener('click',function(e){if(!e.target.closest('nav'))close();});
+  addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+  b.classList.toggle('cur',!!nav.querySelector('a.nm[aria-current]'));})();
 })();

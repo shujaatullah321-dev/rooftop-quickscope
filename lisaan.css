@@ -330,3 +330,48 @@ html{scrollbar-color:color-mix(in oklab,var(--primary) 35%,transparent) transpar
 @media(max-width:560px){.prow{grid-template-columns:1fr auto;}.prow .meter{grid-column:1/-1;order:3}.prow .linkbtn{display:none}}
 .acctbox{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:space-between;border-left:5px solid var(--primary)}
 .acctbox p{margin:0;flex:1 1 280px}
+
+
+/* ===== Phone layout ===== */
+.navmore{display:none}
+@media(max-width:760px){
+  /* a blurred header traps fixed children; keep it solid so the bottom bar really sits at the bottom */
+  header.top{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--surface)}
+  nav{display:grid;grid-template-columns:repeat(15,1fr);gap:2px 2px;overflow:visible;padding:6px 6px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 20px -12px rgba(0,0,0,.35)}
+  nav a,.navmore{grid-column:span 3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 2px;font-size:11px;line-height:1.15;white-space:normal;min-width:0;min-height:54px;border-radius:12px;text-align:center}
+  nav a .ni,.navmore .ni{font-size:22px;line-height:1}
+  nav a.nm{display:none}
+  .navmore{border:0;background:none;color:var(--muted);font-weight:800;font-family:inherit;cursor:pointer}
+  .navmore.cur,.navmore[aria-expanded="true"]{background:var(--primary);color:var(--on-primary)}
+  nav.open{border-radius:20px 20px 0 0}
+  nav.open a.nm{display:flex;order:-1;grid-column:span 5;flex-direction:row;justify-content:flex-start;gap:8px;font-size:14px;padding:10px;min-height:48px;text-align:left;background:color-mix(in oklab,var(--primary) 6%,transparent)}
+  nav.open a.nm .ni{font-size:20px}
+  .top .row{padding:6px 0}
+  .brand .brand-logo{width:38px;height:38px}
+  main{padding-bottom:110px}
+  #toast{bottom:92px}
+  .lead h1{font-size:26px}
+  .q .panel{padding:16px}
+  .opt{min-height:52px}
+  .gw{font-size:22px;padding:4px 12px}
+  .tiles{grid-template-columns:1fr 1fr}
+  .tile b{font-size:24px}
+  .chart span{font-size:9px}
+}
+@media(max-width:380px){
+  .pill#goal{display:none}
+  nav a,.navmore{font-size:10px}
+}
+@media(max-width:760px){
+  .brand{flex-wrap:nowrap;white-space:nowrap;font-size:17px}
+  .brand .ar{display:none}
+  .pill#goal{display:none}
+  .acct{max-width:none}
+}
+@media(max-width:760px){
+  .acct{flex:none}
+  .brand{min-width:0;flex-shrink:1;overflow:hidden}
+  .brand>span:first-child{overflow:hidden;text-overflow:ellipsis}
+  nav.open a.nm[aria-current="page"]{background:var(--primary);color:var(--on-primary)}
+}
+@media(max-width:400px){.pill#xp{display:none}}
