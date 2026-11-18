@@ -1,0 +1,45 @@
+plugins {
+    id 'com.android.application'
+}
+
+// The upload key is written here by the build workflow from a GitHub secret.
+// Without it the release build is signed with a debug key: fine for testing on
+// your own phone, but Google Play will only accept a build signed with your upload key.
+def uploadKey = file('upload-key.jks')
+
+android {
+    namespace = 'com.shujaatdigital.rooftopquickscope'
+    compileSdk = 36
+
+    defaultConfig {
+        applicationId = 'com.shujaatdigital.rooftopquickscope'
+        minSdk = 24
+        targetSdk = 36
+        // Raise versionCode by 1 (and change versionName) for every update you upload to Google Play.
+        versionCode = 1
+        versionName = '1.0'
+    }
+
+    signingConfigs {
+        if (uploadKey.exists()) {
+            upload {
+                storeFile = uploadKey
+                storePassword = System.getenv('KEYSTORE_PASSWORD')
+                keyAlias = 'upload'
+                keyPassword = System.getenv('KEYSTORE_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled = false
+            signingConfig = uploadKey.exists() ? signingConfigs.upload : signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}

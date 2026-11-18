@@ -1,0 +1,5 @@
+app/upload-key.jks
+app/build/
+build/
+.gradle/
+*.jks
