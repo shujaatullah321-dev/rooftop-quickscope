@@ -93,7 +93,7 @@
 <div id="menu">
   <div class="card">
     <h1>Rooftop <span>Quickscope</span></h1>
-    <p class="sub">Walk a war-torn city block, climb the rooftops, and land trick shots. Solo, soldiers hunt you through the streets. Online, your friends are the enemy.</p>
+    <p class="sub">Walk a war-torn city block, climb the rooftops, and land trick shots. Solo, masked fighters hunt you through the streets. Online, your friends are the enemy.</p>
     <div id="result"></div>
     <h2>Loadout</h2>
     <div class="opts" id="rifles"></div>
@@ -374,9 +374,16 @@ function limb(parent,x,y,w,len,d,mat){
   var piv=new T.Group();piv.position.set(x,y,0);
   var m=new T.Mesh(new T.BoxGeometry(w,len,d),mat);m.position.y=-len/2;piv.add(m);parent.add(piv);return piv;
 }
-var CAMO=[['#b5a47f','#8e7c5a','#6e6348','#cbbd9a'],['#4d5a3c','#2f3a28','#6b6a4a','#3e3526'],['#8a8f84','#5d635c','#3f443f','#a5a99d']].map(function(pal){
-  return canvasTex(64,64,function(x,w,h){x.fillStyle=pal[0];x.fillRect(0,0,w,h);
-    for(var i=0;i<60;i++){x.fillStyle=pal[1+(i%3)];x.beginPath();x.ellipse(Math.random()*w,Math.random()*h,rnd(3,9),rnd(2,6),rnd(0,3),0,TAU);x.fill();}});});
+/* Shared materials for the masked stick fighters (lit, slightly rough, so they read as real objects). */
+function stdMat(c,r,m){return new T.MeshStandardMaterial({color:c,roughness:r==null?.85:r,metalness:m||0});}
+var FIGHT={
+  bodies:[stdMat(0x24262b,.9),stdMat(0x2c2722,.9),stdMat(0x202a26,.9),stdMat(0x2a2a30,.9)],
+  boot:stdMat(0x111214,.7),glove:stdMat(0x18191c,.75),rig:stdMat(0x34352f,.8),
+  fabric:stdMat(0x121316,1),skin:stdMat(0xc9956b,.7),rubber:stdMat(0x1b1c1f,.6),
+  metal:stdMat(0x5b6066,.35,.7),glass:stdMat(0x2d4f6e,.12,.6),visor:stdMat(0x7fa8c9,.15,.5),
+  hood:stdMat(0x2b2f26,.95),mesh:stdMat(0x0e0f10,.8),
+  accents:[0xd94a38,0xe0a030,0x2f9fd0,0x4fbf6a,0xb45fc4,0xe8e6e0].map(function(c){return stdMat(c,.6);})
+};
 /* A bolt-action sniper rifle built from simple shapes. It points towards -z. */
 function buildRifle(stockCol){
   var g=new T.Group(),metal=new T.MeshLambertMaterial({color:0x1c1d21}),body=new T.MeshLambertMaterial({color:stockCol||0x6f6548}),glass=new T.MeshBasicMaterial({color:0x4a78c8});
@@ -407,44 +414,55 @@ function buildRifle(stockCol){
 }
 function makeHuman(){
   var root=new T.Group(),rig=new T.Group();root.add(rig);root.scale.setScalar(SC);
-  var ci=(Math.random()*CAMO.length)|0;
-  var skin=new T.MeshLambertMaterial({color:pick([0xe0b08c,0xc68e62,0x8d5a3b,0xf0c8a0])});
-  var cloth=new T.MeshLambertMaterial({map:CAMO[ci]});
-  var vest=new T.MeshLambertMaterial({color:[0x6a5f47,0x3a4230,0x4a4e4a][ci]});
-  var dark=new T.MeshLambertMaterial({color:0x17181b});
+  var body=pick(FIGHT.bodies),acc=pick(FIGHT.accents),mask=(Math.random()*3)|0,F=FIGHT;
   function add(parent,geo,mat,x,y,z){var m=new T.Mesh(geo,mat);m.position.set(x,y,z);parent.add(m);return m;}
   function joint(parent,x,y,z){var g=new T.Group();g.position.set(x,y,z);parent.add(g);return g;}
-  function bone(parent,rt,rb,len,mat){var m=new T.Mesh(new T.CylinderGeometry(rt,rb,len,8),mat);m.position.y=-len/2;parent.add(m);return m;}
+  function bone(parent,rt,rb,len,mat){var m=new T.Mesh(new T.CylinderGeometry(rt,rb,len,10),mat);m.position.y=-len/2;parent.add(m);return m;}
+  function ball(parent,r,mat,x,y,z){return add(parent,new T.SphereGeometry(r,12,10),mat,x||0,y||0,z||0);}
   function leg(x){
-    var th=joint(rig,x,.95,0);bone(th,.085,.068,.46,cloth);
-    var sh=joint(th,0,-.46,0);add(sh,new T.SphereGeometry(.068,8,6),cloth,0,0,0);bone(sh,.064,.05,.42,cloth);
-    add(sh,new T.BoxGeometry(.115,.11,.05),vest,0,-.02,.055);
-    add(sh,new T.BoxGeometry(.1,.1,.26),dark,0,-.44,.05);
+    var th=joint(rig,x,.95,0);ball(th,.05,body);bone(th,.046,.04,.46,body);
+    var sh=joint(th,0,-.46,0);ball(sh,.043,body);bone(sh,.039,.032,.42,body);
+    add(sh,new T.BoxGeometry(.075,.055,.17),F.boot,0,-.445,.045);
     return [th,sh];
   }
-  function arm(x){
-    var up=joint(rig,x,1.47,0);add(up,new T.SphereGeometry(.082,8,6),cloth,0,0,0);bone(up,.06,.052,.3,cloth);
-    var el=joint(up,0,-.3,0);add(el,new T.SphereGeometry(.05,8,6),cloth,0,0,0);bone(el,.05,.042,.27,cloth);
-    add(el,new T.BoxGeometry(.075,.1,.085),dark,0,-.31,0);
+  function arm(x,band){
+    var up=joint(rig,x,1.47,0);ball(up,.045,body);bone(up,.036,.032,.3,body);
+    if(band)add(up,new T.CylinderGeometry(.043,.043,.06,12),acc,0,-.12,0);
+    var el=joint(up,0,-.3,0);ball(el,.036,body);bone(el,.032,.028,.27,body);
+    ball(el,.04,F.glove,0,-.3,0).scale.set(1,1.15,1.05);
     return [up,el];
   }
-  var lL=leg(-.1),lR=leg(.1),aL=arm(-.245),aR=arm(.245);
-  add(rig,new T.BoxGeometry(.34,.2,.22),cloth,0,.98,0);
-  add(rig,new T.BoxGeometry(.36,.06,.24),dark,0,1.08,0);
-  var chest=add(rig,new T.CylinderGeometry(.2,.165,.46,10),cloth,0,1.31,0);chest.scale.z=.68;
-  var plate=add(rig,new T.CylinderGeometry(.215,.19,.36,10),vest,0,1.3,0);plate.scale.z=.76;
-  [-.13,0,.13].forEach(function(px){add(rig,new T.BoxGeometry(.1,.14,.06),vest,px,1.17,.165);});
-  add(rig,new T.BoxGeometry(.3,.36,.16),vest,0,1.32,-.22);
-  add(rig,new T.BoxGeometry(.05,.1,.04),dark,-.15,1.46,.12);
-  add(rig,new T.CylinderGeometry(.05,.056,.1,8),skin,0,1.57,0);
-  var head=add(rig,new T.SphereGeometry(.105,12,10),skin,0,1.69,.01);head.scale.set(.95,1.15,1.05);
-  add(rig,new T.BoxGeometry(.026,.04,.035),skin,0,1.675,.115);
-  add(rig,new T.BoxGeometry(.12,.02,.02),dark,0,1.712,.098);
-  add(rig,new T.BoxGeometry(.09,.03,.03),skin,0,1.615,.085);
-  var helm=add(rig,new T.SphereGeometry(.128,12,8,0,TAU,0,Math.PI*.56),cloth,0,1.71,0);helm.scale.z=1.08;
-  add(rig,new T.BoxGeometry(.02,.09,.1),dark,-.118,1.68,0);add(rig,new T.BoxGeometry(.02,.09,.1),dark,.118,1.68,0);
-  add(rig,new T.BoxGeometry(.2,.035,.04),dark,0,1.785,.105);
-  var gun=joint(rig,.1,1.24,.16),rf=buildRifle([0x7a6d4e,0x2b2f26,0x3a3b3d][ci]);rf.rotation.y=Math.PI;gun.add(rf);
+  var lL=leg(-.09),lR=leg(.09),aL=arm(-.21,true),aR=arm(.21,false);
+  /* pelvis, spine, shoulders */
+  ball(rig,.075,body,0,.98,0).scale.set(1.35,.8,.9);
+  add(rig,new T.CylinderGeometry(.05,.06,.5,10),body,0,1.22,0);
+  var shoulders=add(rig,new T.CylinderGeometry(.034,.034,.44,10),body,0,1.47,0);shoulders.rotation.z=Math.PI/2;
+  /* slim chest rig and sling so they read as fighters */
+  add(rig,new T.BoxGeometry(.19,.22,.05),F.rig,0,1.3,.055);
+  [-.055,.055].forEach(function(px){add(rig,new T.BoxGeometry(.07,.09,.035),F.rig,px,1.22,.09);});
+  var sling=add(rig,new T.BoxGeometry(.03,.62,.015),acc,0,1.24,.085);sling.rotation.z=.62;
+  /* neck, scarf, head */
+  add(rig,new T.CylinderGeometry(.03,.034,.09,10),body,0,1.56,0);
+  var scarf=add(rig,new T.TorusGeometry(.055,.022,8,16),acc,0,1.565,0);scarf.rotation.x=Math.PI/2;
+  var headMat=mask===0?F.fabric:mask===1?F.rubber:F.hood;
+  ball(rig,.115,headMat,0,1.69,0).scale.set(.95,1.1,1);
+  if(mask===0){ /* balaclava with an eye slit */
+    add(rig,new T.BoxGeometry(.15,.036,.03),F.skin,0,1.705,.098);
+    ball(rig,.013,F.mesh,-.036,1.705,.112);ball(rig,.013,F.mesh,.036,1.705,.112);
+    add(rig,new T.BoxGeometry(.16,.012,.02),F.fabric,0,1.726,.104);
+  }else if(mask===1){ /* gas mask: face plate, two lenses, filter */
+    ball(rig,.1,F.rubber,0,1.665,.055).scale.set(1,.95,.6);
+    [-.042,.042].forEach(function(px){var l=add(rig,new T.CylinderGeometry(.031,.031,.016,16),F.glass,px,1.7,.112);l.rotation.x=Math.PI/2;
+      var r=add(rig,new T.TorusGeometry(.031,.007,6,16),F.metal,px,1.7,.118);});
+    var fil=add(rig,new T.CylinderGeometry(.034,.038,.075,14),F.metal,0,1.615,.13);fil.rotation.x=Math.PI/2.4;
+    add(rig,new T.BoxGeometry(.24,.018,.02),F.rubber,0,1.7,-.02);
+  }else{ /* hood, goggles and mesh half-mask */
+    add(rig,new T.BoxGeometry(.21,.042,.05),F.mesh,0,1.705,.08);
+    add(rig,new T.BoxGeometry(.15,.03,.012),F.visor,0,1.705,.107);
+    ball(rig,.085,F.mesh,0,1.628,.05).scale.set(1,.75,.7);
+    ball(rig,.12,F.hood,0,1.725,-.012).scale.set(1,.9,1.05);
+  }
+  var gun=joint(rig,.1,1.24,.16),rf=buildRifle(pick([0x7a6d4e,0x2b2f26,0x3a3b3d,0x1d1e21]));rf.rotation.y=Math.PI;gun.add(rf);
   var glint=add(gun,new T.SphereGeometry(.05,8,6),new T.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.95,fog:false}),0,.098,.36);glint.visible=false;
   rig.traverse(function(o){if(o.isMesh&&o!==glint)o.castShadow=true;});
   var pb=new T.Mesh(new T.BoxGeometry(.8,1.55,.6),proxyMat);pb.position.y=.78;root.add(pb);
@@ -498,7 +516,7 @@ function poseHuman(h,dt){
     h.shinR.rotation.x=.06+(mv?Math.max(0,-Math.cos(ph))*.9:0);
     h.aimK+=((h.aim>0?1:0)-h.aimK)*Math.min(1,dt*10);
     var a=h.aimK,bobY=mv?Math.abs(Math.sin(ph))*.02:0;
-    h.gun.rotation.x=.45*(1-a);h.gun.position.set(.1-.03*a,1.24+.21*a+bobY,.16+.05*a);
+    h.gun.rotation.x=.28*(1-a);h.gun.position.set(.1-.03*a,1.24+.21*a+bobY,.16+.05*a);
     h.armR.rotation.x=-.55-.75*a;h.foreR.rotation.x=-1.25+.5*a;
     h.armL.rotation.x=-.9-.55*a;h.armL.rotation.z=.32;h.foreL.rotation.x=-.75+.35*a;
     h.glint.visible=h.aim>0;
@@ -513,13 +531,13 @@ function headPos(h,v){return v.set(h.x,h.y+2.02*SC,h.z);}
 var rifle=new T.Group();
 (function(){
   rifle.add(buildRifle(0x6f6548));
-  var sleeve=new T.MeshLambertMaterial({map:CAMO[0]}),glove=new T.MeshLambertMaterial({color:0x23241f}),up=new T.Vector3(0,1,0);
+  var sleeve=FIGHT.bodies[0],glove=FIGHT.glove,up=new T.Vector3(0,1,0);
   function seg(a,b,r,mat){var d=new T.Vector3().subVectors(b,a),m=new T.Mesh(new T.CylinderGeometry(r*1.3,r,d.length(),8),mat);
     m.position.copy(a).add(b).multiplyScalar(.5);m.quaternion.setFromUnitVectors(up,d.clone().normalize());rifle.add(m);}
   function hand(x,y,z,sx,sy,sz){var m=new T.Mesh(new T.SphereGeometry(.05,8,6),glove);m.position.set(x,y,z);m.scale.set(sx,sy,sz);rifle.add(m);}
-  seg(new T.Vector3(.012,-.11,.14),new T.Vector3(.17,-.36,.66),.04,sleeve);
+  seg(new T.Vector3(.012,-.11,.14),new T.Vector3(.17,-.36,.66),.026,sleeve);
   hand(.008,-.095,.125,.9,1.2,1);
-  seg(new T.Vector3(-.01,-.06,-.34),new T.Vector3(-.21,-.36,.3),.04,sleeve);
+  seg(new T.Vector3(-.01,-.06,-.34),new T.Vector3(-.21,-.36,.3),.026,sleeve);
   hand(-.004,-.05,-.37,1,.75,1.5);
 })();
 camera.add(rifle);
