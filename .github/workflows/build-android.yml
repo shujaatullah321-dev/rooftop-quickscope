@@ -25,9 +25,15 @@ jobs:
       - name: Add the upload key (from repository secrets)
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         run: |
           if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "$KEYSTORE_BASE64" | base64 -d > app/upload-key.jks
+            CLEAN=$(printf '%s' "$KEYSTORE_BASE64" | tr -d ' \r\n\t')
+            echo "Key text length: ${#CLEAN} characters (expected 3532)"
+            echo "Password length: ${#KEYSTORE_PASSWORD} characters (expected 24)"
+            printf '%s' "$CLEAN" | base64 -d > app/upload-key.jks || { echo "::error::KEYSTORE_BASE64 is not valid key text. Paste the whole KEYSTORE_BASE64.txt again."; exit 1; }
+            echo "Key file size: $(stat -c %s app/upload-key.jks) bytes (expected 2648)"
+            keytool -list -keystore app/upload-key.jks -storepass "$KEYSTORE_PASSWORD" >/dev/null 2>&1 || { echo "::error::The key and password do not match. Check KEYSTORE_PASSWORD and KEYSTORE_BASE64."; exit 1; }
             echo "Upload key found: the build will be ready for Google Play."
           else
             echo "::warning::No KEYSTORE_BASE64 secret. The build is test-only and Google Play will not accept it."
