@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#1f6f63">
-<meta name="description" content="Hand in Hand: a cooperative walking adventure for a Muslim husband and wife. 30 tasks you can only solve together, on one phone, tablet or computer.">
+<meta name="description" content="Hand in Hand: a cooperative walking adventure for a Muslim husband and wife. 100 tasks you can only solve together, on one phone, tablet or computer.">
 <title>Hand in Hand — يَدًا بِيَد</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
@@ -22,6 +22,8 @@ canvas{position:fixed;inset:0;display:block}
 #codep{position:fixed;top:52px;left:50%;transform:translateX(-50%);display:none;gap:6px;align-items:center;background:#fff8e1;border:2px solid #e0a23a;border-radius:14px;padding:6px 12px;z-index:6;font-weight:800;box-shadow:0 4px 14px rgba(0,0,0,.15)}
 #codep b{font-size:24px;line-height:1;padding:2px 4px;border-radius:8px}
 #codep b.got{background:#bdeccb}
+#badge{position:fixed;top:50px;right:10px;display:none;flex-direction:column;gap:4px;z-index:6;align-items:flex-end}#badge span{background:#fff;border-radius:10px;padding:3px 10px;font-weight:800;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,.15)}#badge .t1{background:#3b82c4;color:#fff}#badge .t2{background:#c4508a;color:#fff}#badge .low{background:#ffd34d}
+.part{font-size:15px;margin:16px 0 4px;color:#c0703f;text-align:left}.part small{color:#8a7d6e}
 #msg{position:fixed;bottom:max(8px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);max-width:min(92vw,720px);background:rgba(30,40,40,.86);color:#fff;padding:8px 14px;border-radius:12px;font-size:14px;line-height:1.35;text-align:center;z-index:6;pointer-events:none;display:none}
 #touch{position:fixed;inset:0;z-index:3;display:none}
 body.touch #touch{display:block}
@@ -73,12 +75,13 @@ label.f input{font-size:16px;padding:9px 10px;border-radius:10px;border:2px soli
 <canvas id="cv"></canvas>
 <div id="hud"><div id="hudT"></div><div id="hudN"></div><button class="hb" data-go="restart" title="Restart this task (R)">↻</button><button class="hb" data-go="pause" title="Menu (Esc)">☰</button></div>
 <div id="codep"></div>
+<div id="badge"></div>
 <div id="msg"></div>
 <div id="touch"><div class="half l"></div><div class="half r"></div><div id="sticks"></div><button class="act p1" id="a1">✋</button><button class="act p2" id="a2">✋</button></div>
 
 <div class="ov" id="title"><div class="card">
  <h1>Hand in Hand <span class="ar">يَدًا بِيَد</span></h1>
- <p>A walking adventure for husband and wife. <b>30 tasks</b> you can only finish <b>together</b>: one device, one side each.</p>
+ <p>A walking adventure for husband and wife. <b>100 tasks</b> you can only finish <b>together</b>: one device, one side each.</p>
  <div class="row">
   <label class="f">Husband’s name<input id="n1" maxlength="12"></label>
   <label class="f">Wife’s name<input id="n2" maxlength="12"></label>
@@ -94,6 +97,7 @@ label.f input{font-size:16px;padding:9px 10px;border-radius:10px;border:2px soli
   <li>Sit together. On a phone or tablet hold it sideways: the <b>left half</b> moves the husband and the <b>right half</b> moves the wife. Drag your thumb to walk, tap ✋ to act.</li>
   <li>Every task needs both of you: plates that hold doors, heavy chests you push together, lights only one of you can pass, codes one sees and the other enters.</li>
   <li>Finish a task by standing on the two glowing doorways together.</li>
+  <li><b>Part 2 (tasks 31–100)</b> asks for more: 👣 a shared step budget, “your turn / my turn” (✋ passes your turn), 🤝 walking in step (one move moves you both), 🪞 mirror steps (the wife moves the opposite way left and right), levers that open one door and close another, and the lookout tower that shows codes and the safe path.</li>
   <li>After each task, take a moment for the little “together moment” before you both tap ready.</li>
   <li>Stuck? Talk it through, then press ↻ to try the task again.</li>
  </ul>
@@ -459,6 +463,165 @@ var BOND=[
  'Make dua together for both of your parents.',
  'Make this dua together: “Rabbana hab lana min azwajina wa dhurriyyatina qurrata a‘yun.”'
 ];
+
+/* Part 2: Deeper together — tasks 31-100 */
+CHAPTERS.push(
+{"name": "Rainy Day at Home", "ar": "يَوْمٌ مَاطِرٌ فِي الْبَيْتِ", "theme": "home", "end": {"ar": "هُوَ الَّذِي خَلَقَكُمْ مِنْ نَفْسٍ وَاحِدَةٍ وَجَعَلَ مِنْهَا زَوْجَهَا لِيَسْكُنَ إِلَيْهَا", "en": "It is He who created you from one soul, and made from it its mate so that he may find rest in her.", "ref": "Qur’an 7:189"}},
+{"name": "The Olive Grove", "ar": "بُسْتَانُ الزَّيْتُونِ", "theme": "garden", "end": {"ar": "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ", "en": "Our Lord, give us good in this world and good in the Hereafter, and protect us from the punishment of the Fire.", "ref": "Qur’an 2:201"}},
+{"name": "The Spice Bazaar", "ar": "سُوقُ التَّوَابِلِ", "theme": "souq", "end": {"ar": "الدُّنْيَا مَتَاعٌ، وَخَيْرُ مَتَاعِ الدُّنْيَا الْمَرْأَةُ الصَّالِحَةُ", "en": "This world is enjoyment, and the best enjoyment of this world is a righteous wife.", "ref": "Hadith, Muslim"}},
+{"name": "The Caravan Trail", "ar": "دَرْبُ الْقَافِلَةِ", "theme": "desert", "end": {"ar": "وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَى", "en": "And help one another in righteousness and piety.", "ref": "Qur’an 5:2"}},
+{"name": "The Starlit Wadi", "ar": "الْوَادِي تَحْتَ النُّجُومِ", "theme": "night", "end": {"ar": "أَلَا بِذِكْرِ اللهِ تَطْمَئِنُّ الْقُلُوبُ", "en": "Surely in the remembrance of Allah do hearts find rest.", "ref": "Qur’an 13:28"}},
+{"name": "The Courtyard of Patience", "ar": "صَحْنُ الصَّبْرِ", "theme": "masjid", "end": {"ar": "لَئِنْ شَكَرْتُمْ لَأَزِيدَنَّكُمْ", "en": "If you are grateful, I will surely give you more.", "ref": "Qur’an 14:7"}},
+{"name": "The Riverside", "ar": "ضِفَّةُ النَّهْرِ", "theme": "garden", "end": {"ar": "وَاعْتَصِمُوا بِحَبْلِ اللهِ جَمِيعًا وَلَا تَفَرَّقُوا", "en": "And hold firmly to the rope of Allah all together, and do not become divided.", "ref": "Qur’an 3:103"}},
+{"name": "The Old City Lanes", "ar": "أَزِقَّةُ الْمَدِينَةِ الْقَدِيمَةِ", "theme": "souq", "end": {"ar": "لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ", "en": "None of you truly believes until he loves for his brother what he loves for himself.", "ref": "Hadith, al-Bukhari and Muslim"}},
+{"name": "The Dunes of Trust", "ar": "كُثْبَانُ الثِّقَةِ", "theme": "desert", "end": {"ar": "إِنَّ الرِّفْقَ لَا يَكُونُ فِي شَيْءٍ إِلَّا زَانَهُ", "en": "Gentleness is not found in anything except that it beautifies it.", "ref": "Hadith, Muslim"}},
+{"name": "Lantern Night", "ar": "لَيْلَةُ الْفَوَانِيسِ", "theme": "night", "end": {"ar": "إِنَّ اللهَ مَعَ الصَّابِرِينَ", "en": "Indeed, Allah is with the patient.", "ref": "Qur’an 2:153"}},
+{"name": "The House of Knowledge", "ar": "بَيْتُ الْعِلْمِ", "theme": "home", "end": {"ar": "وَقُلْ رَبِّ زِدْنِي عِلْمًا", "en": "And say: My Lord, increase me in knowledge.", "ref": "Qur’an 20:114"}},
+{"name": "Mirror Lake", "ar": "بُحَيْرَةُ الْمِرْآةِ", "theme": "garden", "end": {"ar": "تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ لَكَ صَدَقَةٌ", "en": "Your smile in the face of your brother is charity for you.", "ref": "Hadith, at-Tirmidhi"}},
+{"name": "The Mountain Masjid", "ar": "مَسْجِدُ الْجَبَلِ", "theme": "masjid", "end": {"ar": "هُمْ وَأَزْوَاجُهُمْ فِي ظِلَالٍ عَلَى الْأَرَائِكِ مُتَّكِئُونَ", "en": "They and their spouses, in shade, reclining on adorned couches.", "ref": "Qur’an 36:56"}},
+{"name": "The Gardens of Jannah", "ar": "جَنَّاتُ النَّعِيمِ", "theme": "garden", "end": {"ar": "ادْخُلُوا الْجَنَّةَ أَنْتُمْ وَأَزْوَاجُكُمْ تُحْبَرُونَ", "en": "Enter Paradise, you and your spouses, delighted.", "ref": "Qur’an 43:70"}});
+LEVELS.push(
+{"t": "Hand Over Hand", "hint": "Each plate opens a door in your partner’s room. Take it in turns to let each other through, one door at a time.", "map": ["#####################", "#1....#.....#......E#", "#..b..A..d..C.......#", "#.....#.....#.......#", "#####################", "#.....#.....#.......#", "#.....B..a..D..c....#", "#2....#.....#......E#", "#####################"]},
+{"t": "Your Turn, My Turn", "hint": "Only one of you can move at a time. Take one step, then it is your partner’s turn. Press ✋ to give your turn away.", "map": ["#####################", "#1.......#.....~....#", "#..o..a..A..o..~..E.#", "#........#.....~....#", "#..o..a..#..o..~..E.#", "#2.......#.....~....#", "#####################"], "cfg": {"turns": true, "all": ["a"]}},
+{"t": "Three Heavy Chests", "hint": "Every plate must be covered before the door opens. Each chest needs both of you pushing together.", "map": ["######################", "#1.................#.#", "#..................#E#", "#..O.....O.....O...#.#", "#..................A.#", "#..a.....a.....a...#E#", "#2.................#.#", "######################"], "cfg": {"all": ["a"]}},
+{"t": "Walk in Step", "hint": "One move moves you both, the same way. Use the walls to line yourselves up with the doorways.", "map": ["####################", "#1....#........#..E#", "#.....#..##....#...#", "#..........##......#", "####################", "#.....2....#.......#", "#..##...#......#...#", "#.......#.........E#", "####################"], "cfg": {"linked": true}},
+{"t": "Count Every Step", "hint": "You share a small number of steps. Plan the route together before anyone moves: both doorways need a box holding their plate.", "map": ["###################", "#E..#.............#", "#...A...a.........#", "#...#....o....o...#", "#####.....1.......#", "#...#.....2.......#", "#...C...c.........#", "#E..#.............#", "###################"], "cfg": {"steps": 46}},
+{"t": "Rows of Olives", "hint": "You walk in step. Trees stop one of you while the other keeps going.", "map": ["####################", "#1.T.....T......T.E#", "#....T.......T.....#", "#..T....T..T....T..#", "####################", "#2.....T.....T....E#", "#..T.......T.....T.#", "#.....T..T....T....#", "####################"], "cfg": {"linked": true}},
+{"t": "Box in Step", "hint": "Walking in step, push the boxes into the stream to build a bridge for both of you.", "map": ["####################", "#1.......~.......E.#", "#...o....~.........#", "#........~....T....#", "####################", "#2.......~.......E.#", "#....o...~...T.....#", "#........~.........#", "####################"], "cfg": {"linked": true}},
+{"t": "Harvest Together", "hint": "Collect all the olives (drops). Only one of you moves at a time, so share the work fairly.", "map": ["####################", "#1..*....T....*...E#", "#.TTT.TT...TT.TTT..#", "#..*..T..*..T..*...#", "#.TT..TT.T.TT..TT..#", "#2.*.....*.....*..E#", "####################"], "cfg": {"turns": true}},
+{"t": "The Oil Press", "hint": "Two chests, one press. Push the chests onto both plates, then pull the lever together.", "map": ["#####################", "#1........#.........#", "#...O..a..#.........#", "#.........A.........#", "#...O..a..#.........#", "#2........#...S.S...#", "#############B#######", "#...........E..E....#", "#####################"], "cfg": {"all": ["a"], "sync": "b"}},
+{"t": "Open One, Close One", "hint": "The lever opens one door and closes another. Take turns at the lever so you can both get through.", "map": ["######################", "#1.......#.....#.....#", "#...L....B..d..C...E.#", "#........#.....#.....#", "######################", "#.....#.......#......#", "#2....A..o..c.D....E.#", "#.....#.......#......#", "######################"], "cfg": {"levers": ["ab"], "inverse": ["b"]}},
+{"t": "Watch and Walk", "hint": "Only the husband can reach the lookout tower. The wife walks the symbols in the order he can see.", "map": ["######################", "#1......h.......#....#", "#.......h...V...#..E.#", "#########.......A....#", "#.5...6.w.......#..E.#", "#2..7...w.......#....#", "#.8...9.w.......#....#", "######################"], "cfg": {"code": [6, 8, 5, 9, 7], "codeGate": "a"}},
+{"t": "Bargain in Turns", "hint": "One step each. The one on the tower must keep passing their turn with ✋ while the other walks the code.", "map": ["####################", "#1....V......#.....#", "#............#..E..#", "#..5..6..7...A.....#", "#............#..E..#", "#2...8...9...#.....#", "####################"], "cfg": {"turns": true, "code": [9, 5, 8, 7, 6], "codeGate": "a"}},
+{"t": "Spice Sacks", "hint": "Push the sacks onto the plates. Every plate opens a door on your partner’s side.", "map": ["######################", "#1.....#.......#....E#", "#..o...A...o...C.....#", "#......#....d..#.....#", "#####b##########.....#", "#2.....#.......#.....#", "#..o...B...o...D.....#", "#.....a#....c..#....E#", "######################"]},
+{"t": "Carry It Together", "hint": "Hold hands (stay close) and push the heavy chests together onto both plates.", "map": ["#####################", "#1.......#......#...#", "#........A......B.E.#", "#2..O....#..O...#...#", "#...a....#..b...#.E.#", "#........#......#...#", "#####################"], "cfg": {"tether": 2}},
+{"t": "The Merchant’s Riddle", "hint": "Lookout first: learn the code and the safe path across the cracked floor. Then the one on the tower must cross from memory!", "map": ["######################", "#1....V..#????????#..#", "#........#??+++??S#.E#", "#..5..6..A+++?+??+B..#", "#........#????+++S#.E#", "#2.7..8..#????????#..#", "######################"], "cfg": {"code": [8, 6, 5, 7], "codeGate": "a", "sync": "b"}},
+{"t": "Be My Wall", "hint": "On sand you keep sliding. To reach the second doorway, one of you must stand still so the other can stop against you.", "map": ["###################", "#1=====T==========#", "#===T=============#", "#=================#", "#===========T=====#", "#2============T===#", "######E#####E######", "###################"]},
+{"t": "Tied for the Journey", "hint": "You are holding hands the whole way, but the lights split your paths. Walk side by side and push the box onto the plate.", "map": ["######################", "#1...h....#....w.....#", "#....h..o.B....w...E.#", "#....h....#....w.....#", "#2...#..b.#....#...E.#", "#....w....#....h.....#", "######################"], "cfg": {"tether": 3}},
+{"t": "Water Rations", "hint": "Collect every water drop. One step each, and you share a small step budget.", "map": ["####################", "#1..*.....#.....*..#", "#.....##..#..##....#", "#..*..##.....##..*.#", "#.........#........#", "#2..*.....#.....*.E#", "#.........#.......E#", "####################"], "cfg": {"turns": true, "steps": 60}},
+{"t": "Sand and Stone", "hint": "Push the box onto the sand and it slides with you. Your partner must stand just past the plate to be the wall that stops it.", "map": ["#####################", "#1.....=====T===#...#", "#..o...====a====A.E.#", "#......=========#...#", "#2.....====T====#.E.#", "#####################"]},
+{"t": "Mirage Mirror", "hint": "Mirror steps: you move together, but the wife moves the opposite way left and right.", "map": ["#####################", "#1..#.....#......#.2#", "#.....#...#..#......#", "#..#......#.....#...#", "#.......#.#...#.....#", "#..E......#....E....#", "#####################"], "cfg": {"mirror": true}},
+{"t": "Lantern Bearer", "hint": "The wife carries the lantern. Stay close, hand in hand, and she will show you where the cracks are.", "map": ["######################", "#1..#....?....#...?.E#", "#...#.##.#.##.#.#.#.E#", "#2?...#...?.#...#....#", "#.#.#.#.#.###.###.#?.#", "#...#...#.....?...#..#", "######################"], "cfg": {"dark": "w", "tether": 2}},
+{"t": "Night Code", "hint": "Only the husband’s lantern lights the way. The lookout tower still shows the code to whoever stands on it.", "map": ["####################", "#1.......V....#....#", "#..5.##....6..#..E.#", "#....##.......A....#", "#..7....##..8.#..E.#", "#2.......##.9.#....#", "####################"], "cfg": {"dark": "h", "code": [7, 9, 5, 8, 6], "codeGate": "a"}},
+{"t": "Gather the Stars", "hint": "Collect every star in the dark, holding hands. The husband carries the lantern.", "map": ["####################", "#1...*..#...*....E.#", "#.##.##.#.##.###..E#", "#..*.........*.....#", "#2##.##.#.##.###...#", "#.......#..........#", "####################"], "cfg": {"dark": "h", "tether": 3}},
+{"t": "Light the Way for Me", "hint": "One of you stands on the tower to light the safe path while the other crosses. Then the one across lights it from the far tower.", "map": ["#####################", "#1.....?????+++.....#", "#..V...++?+++??..V..#", "#......?+++????...E.#", "#2.....????????...E.#", "#####################"]},
+{"t": "In Step Under the Stars", "hint": "Walking in step, in the dark. The husband’s lantern lights the way for both rooms.", "map": ["####################", "#1...#.......#....E#", "#..#...#..#....#...#", "#....#...#...#.....#", "####################", "#2.#.....#...#.....#", "#....#.#...#....#..#", "#..#.....#......#.E#", "####################"], "cfg": {"linked": true, "dark": "h"}},
+{"t": "Mirror Courtyard", "hint": "Mirror steps: when the husband goes left, the wife goes right. Push your box onto your plate to open your partner’s door. The pillar helps you get out of line.", "map": ["#####################", "#1.#......#........2#", "#.....o...#..o......#", "#.....b...#..a......#", "####A###########B####", "#.........#.........#", "#..E......#......E..#", "#####################"], "cfg": {"mirror": true}},
+{"t": "Wudu Together", "hint": "Mirror steps to the two green buttons, then press action together. Patience: the pillars are not the same on both sides.", "map": ["#####################", "#1........#........2#", "#.##..#...#..##.#...#", "#.......S.#.S.......#", "#..#..##..#...#..##.#", "#.........#.........#", "####A#########A######", "#..E......#......E..#", "#####################"], "cfg": {"mirror": true, "sync": "a"}},
+{"t": "Patient Steps", "hint": "A heavy chest, two plates and only a few steps. Think it through together first.", "map": ["#####################", "#1........#.........#", "#.........A....o....#", "#2..O.....#.........#", "#...a.....#....b....#", "#.........#.........#", "############B########", "#.....E.......E.....#", "#####################"], "cfg": {"steps": 56}},
+{"t": "Rows of Prayer", "hint": "Walking in step, push every box onto its plate to open the door.", "map": ["####################", "#1.......#.........#", "#...o..a.A..o...bBE#", "#........#.........#", "####################", "#2.......#.........#", "#....o.a.A...o..bBE#", "#........#.........#", "####################"], "cfg": {"linked": true, "all": ["a", "b"]}},
+{"t": "Side by Side", "hint": "Mirror steps and a lever that opens one door but closes another. Go slowly and talk it through.", "map": ["#####################", "#1........#........2#", "#...L.....#.........#", "#.........#.....L...#", "####A###########B####", "#.........#.........#", "#....E....#....E....#", "#####################"], "cfg": {"mirror": true, "levers": ["ab", "ba"], "inverse": ["b"]}},
+{"t": "Stepping Stones", "hint": "Each river needs one box. The box you push makes the bridge your partner needs.", "map": ["#####################", "#1..o..#~#.....#~#.E#", "#......#~#..o..#~#..#", "#..o....~.......~...#", "#......#~#..o..#~#..#", "#2.....#~#.....#~#.E#", "#####################"]},
+{"t": "The Ferry Plate", "hint": "Push the box onto its plate for the first door. Then hold the plates for each other so you both get through the second door.", "map": ["######################", "#1......#.......#...E#", "#...o...A.......B....#", "#.....a.#.......#..b.#", "#####.###########....#", "#2......#..........E.#", "#...b...#............#", "######################"]},
+{"t": "River in Step", "hint": "Walking in step, build both bridges with your boxes.", "map": ["#####################", "#1......~......o..E.#", "#...o...~...........#", "#.......~......~....#", "#####################", "#2......~...o.......#", "#....o..~......~..E.#", "#.......~......~....#", "#####################"], "cfg": {"linked": true}},
+{"t": "Catching Fish", "hint": "Collect every fish (drop) along the river. One step each, take turns kindly.", "map": ["####################", "#1.*....~~....*...E#", "#......~~..*.......#", "#..*..........~~.*.#", "#....~~..*...~~....#", "#2..~~.......~~...E#", "####################"], "cfg": {"turns": true}},
+{"t": "Two Banks, One Rope", "hint": "Holding hands across the bank, push both boxes into the river to cross together.", "map": ["####################", "#1..........~~....E#", "#...o.......~~.....#", "#2..........~~....E#", "#...o.......~~.....#", "#...........~~.....#", "####################"], "cfg": {"tether": 2}},
+{"t": "Lever Lanes", "hint": "Each lever opens one door and closes another. Work out the right order together.", "map": ["######################", "#1...L...#...L...#..E#", "#........A.......B...#", "#........#.......#...#", "####################.#", "#2...L...#.......#...#", "#........C.......D..E#", "#........#...L...#...#", "######################"], "cfg": {"levers": ["ac", "cb", "bd", "da"], "inverse": ["c", "d"]}},
+{"t": "Market Code in Turns", "hint": "Take turns. One keeps watch on the tower, the other walks the code, then swap places for the plate.", "map": ["#####################", "#1....V.....#......E#", "#...........A.......#", "#..5..6..7..#..a....#", "#...........#.......#", "#2..8...9...B......E#", "#####################"], "cfg": {"turns": true, "code": [5, 9, 6, 8, 7], "codeGate": "a"}},
+{"t": "The Lantern Seller", "hint": "Only the wife carries a lantern tonight. The levers are hard to see: guide each other.", "map": ["######################", "#1..#......#.......E.#", "#...A..L...#..L......#", "#...#......B.........#", "#.#####.########.....#", "#2.......#....C......#", "#..L.....#....#....E.#", "######################"], "cfg": {"dark": "w", "levers": ["a", "c", "b"]}},
+{"t": "Crowded Alley", "hint": "Walking in step through narrow alleys. Pull the levers as you pass.", "map": ["######################", "#1..#....L...#......E#", "#............A.......#", "#...#........#.......#", "######################", "#2..#........#.......#", "#............B......E#", "#...#....L...#.......#", "######################"], "cfg": {"linked": true, "levers": ["b", "a"]}},
+{"t": "The City Gate", "hint": "Learn the code from the tower, push both boxes onto the plates, then press the green buttons together to open the great gate.", "map": ["#######################", "#1...V....#.......#...#", "#.........A..o....B.S.#", "#..5..6...#..b....#...#", "#.........#.....o.#.S.#", "#2..7..8..#...b...##C##", "#.........#.......#E.E#", "#######################"], "cfg": {"code": [6, 8, 5, 7], "codeGate": "a", "all": ["b"], "sync": "c"}},
+{"t": "Trust Fall", "hint": "You slide on the sand until something stops you. Find a way to the lever, then slide down to the door together.", "map": ["###################", "#1===.====T=======#", "#=========.===L===#", "#===T=======.=====#", "#=====.===========#", "#2=====T==========#", "###########A#######", "#.....E.......E...#", "###################"], "cfg": {"levers": ["a"]}},
+{"t": "Sliding in Step", "hint": "Walking in step on sand. You both slide until you hit something.", "map": ["###################", "#1=====T=======T==#", "#========TT=====E=#", "#=T===============#", "###################", "#2======T=========#", "#T==========ET====#", "#==========T======#", "###################"], "cfg": {"linked": true}},
+{"t": "Dune Plates", "hint": "One of you holds the plate in the sand while the other slides through, then the one inside opens the second door.", "map": ["####################", "#1==========a#.....#", "#============A..E..#", "#===T====T===#.....#", "#============B.bE..#", "#2==========T#.....#", "####################"]},
+{"t": "Hold the Rope on Sand", "hint": "Holding hands on sliding sand. You can only slide as far as the rope lets you.", "map": ["###################", "#1======T=========#", "#=====T======T====#", "#===========T=====#", "#==T=====T========#", "#2=========T====E.#", "#==============T.E#", "###################"], "cfg": {"tether": 3}},
+{"t": "Footprints", "hint": "Few steps, lots of sand. The box slides too: your partner must be the wall that stops it on the plate. Plan every slide together.", "map": ["###################", "#1==.==#=====.====#", "#.=====A====To====#", "#===L==#==========#", "#======#=====b====#", "#2=====#==T=T=====#", "#########B#########", "#....E.......E....#", "###################"], "cfg": {"levers": ["a"], "steps": 42}},
+{"t": "Two Lanterns, One Path", "hint": "Take turns on the towers. Whoever is across lights the safe path for the other.", "map": ["######################", "#1.....#?????????#...#", "#..V...#?+++?????#.V.#", "#......+++?+++??++...#", "#2.....#?????++++#.E.#", "#......#?????????#.E.#", "######################"], "cfg": {"dark": "h"}},
+{"t": "Stars in Step", "hint": "Walking in step in the dark. Collect every star, then the doorways.", "map": ["####################", "#1..*...#....*....E#", "#..##.......##.....#", "#.....#..*.....#...#", "####################", "#2.....#...*......E#", "#..*.##.......##...#", "#.........#....*...#", "####################"], "cfg": {"linked": true, "dark": "w"}},
+{"t": "Moonlit Mirror", "hint": "Mirror steps by moonlight. Each of you pulls a lever that opens your partner’s door.", "map": ["#####################", "#1...#....#....#...2#", "#.#....#..#..#....#.#", "#...#..L..#..L..#...#", "#.#...#...#...#...#.#", "#...#.....#.....#...#", "###B#############A###", "#....E....#....E....#", "#####################"], "cfg": {"mirror": true, "dark": "w", "levers": ["a", "b"]}},
+{"t": "Night Watch", "hint": "The code is on the tower, the safe path is in the dark. One watches, one walks, then swap.", "map": ["######################", "#1...V.....#?????#...#", "#..........A+++??#.E.#", "#..5..6..7.#??+??#...#", "#..........#??++++...#", "#2...8...9.#?????#.E.#", "######################"], "cfg": {"dark": "h", "code": [9, 6, 8, 5, 7], "codeGate": "a"}},
+{"t": "Lantern Procession", "hint": "Hand in hand by lantern light. Three levers, three doors.", "map": ["#######################", "#1..#....L....#.......#", "#...A.........B......E#", "#2..#....###..#.......#", "#.L.#....#....###C#####", "#...#....#.L..#......E#", "#...#....#....#.......#", "#######################"], "cfg": {"dark": "h", "tether": 3, "levers": ["b", "a", "c"]}},
+{"t": "Bookshelves", "hint": "Push every book box onto a plate. All the plates must be covered.", "map": ["####################", "#1.......#.........#", "#..o.o.a.#.........#", "#........A.........#", "#..o...a.#.........#", "#2.......#.......E.#", "#..a.....#.......E.#", "####################"], "cfg": {"all": ["a"]}},
+{"t": "The Library Code", "hint": "Learn the code from the tower, then pull the lever to open the reading room.", "map": ["######################", "#1.....V....#.......E#", "#..5...6....A....L...#", "#...........#........#", "###.#########...######", "#2..7...8...B.......E#", "#.....9.....#........#", "######################"], "cfg": {"code": [7, 5, 9, 6, 8], "codeGate": "a", "levers": ["b"]}},
+{"t": "Quiet Reading", "hint": "Only a few steps each. Hand each other through the doors with as few moves as you can.", "map": ["#####################", "#1....#.....#......E#", "#..b..A..d..C.......#", "#.....#.....#.......#", "#####################", "#.....#.....#.......#", "#..o..B..a..D..c....#", "#2....#.....#......E#", "#####################"], "cfg": {"steps": 46}},
+{"t": "Study in Step", "hint": "Walking in step, both boxes must reach their plates.", "map": ["####################", "#1.......#.........#", "#...o....A.....a...#", "#........#.........#", "#..a.....#.....#..E#", "####################", "#2.......#.........#", "#....o...B.....b...#", "#........#.........#", "#..b.....#.....#..E#", "####################"], "cfg": {"linked": true}},
+{"t": "The Final Exam", "hint": "Everything you have learned: a code from the tower, a box for the plate, and the lever beyond.", "map": ["#######################", "#1...V....#.....#.....#", "#.........A..o..B..L..#", "#..5..6...#.....#.....#", "#.........#..b..###C###", "#2..7..8..#.....#.....#", "#.........#.....#.E.E.#", "#######################"], "cfg": {"code": [8, 5, 7, 6], "codeGate": "a", "levers": ["c"]}},
+{"t": "Reflections", "hint": "Mirror steps around the lake. Use the trees to get in line.", "map": ["#####################", "#1..T.....~.....T..2#", "#.....T...~...T.....#", "#..T......~.....T...#", "#......T..~..T......#", "#E........~......E..#", "#####################"], "cfg": {"mirror": true}},
+{"t": "Mirror Boxes", "hint": "Mirror steps. Push both boxes into the lake to make your bridges.", "map": ["#####################", "#1........#........2#", "#..o......#.....o...#", "#.........#.........#", "#~~~~~~~~~#~~~~~~~~~#", "#.........#.........#", "#....E....#....E....#", "#####################"], "cfg": {"mirror": true}},
+{"t": "Lake Plates", "hint": "Mirror steps: push your box onto your plate to open your partner’s door. The pillars help you get out of line.", "map": ["#####################", "#1........#........2#", "#..#...o..#.o..#....#", "#......b..#.a.......#", "###A###########B#####", "#.........#.........#", "#.E.......#.......E.#", "#####################"], "cfg": {"mirror": true}},
+{"t": "Lilies in the Mirror", "hint": "Collect the lilies (drops) with mirror steps.", "map": ["#####################", "#1...*....#...*....2#", "#..T...T..#..T...T..#", "#.*.......#.....*...#", "#...T..*..#..T......#", "#E........#*.......E#", "#####################"], "cfg": {"mirror": true}},
+{"t": "The Still Water", "hint": "Mirror steps. Line up one behind the other above the chest, then push it into the lake together to make a bridge.", "map": ["#####################", "#1.................2#", "#.....#.......#.....#", "#.........O.........#", "#...................#", "#~~~~~~~~~~~~~~~~~~~#", "#...................#", "#........E.E........#", "#####################"], "cfg": {"mirror": true}},
+{"t": "Climb Together", "hint": "Hand in hand up the mountain, pushing the heavy chests onto the plates.", "map": ["####################", "#1.......#.........#", "#2...O...A....O....#", "#........#.........#", "#....a...#....b....#", "#........###B#######", "#..........E.E.....#", "####################"], "cfg": {"tether": 2}},
+{"t": "Steps of the Minaret", "hint": "Walking in step with only a few steps to spare.", "map": ["###################", "#1....#.....#....E#", "#..#.....#.....#..#", "#.....#.....#.....#", "###################", "#2.#.....#.....#..#", "#.....#.....#.....#", "#..#.....#.......E#", "###################"], "cfg": {"linked": true, "steps": 26}},
+{"t": "The Call to Prayer", "hint": "Take turns: watch the code from the tower, walk it, then press the green buttons together.", "map": ["#####################", "#1....V....#.......E#", "#..........A..S.....#", "#..5..6..7.#........#", "#..........#..S.....#", "#2...8..9..#..###B###", "#..........#.......E#", "#####################"], "cfg": {"turns": true, "code": [6, 9, 5, 8, 7], "codeGate": "a", "sync": "b"}},
+{"t": "Mountain Mirror", "hint": "Mirror steps and two levers. One opens a door, one closes it again.", "map": ["#####################", "#1...L....#........2#", "#.........#.........#", "#..#...#..#..#...#..#", "#.........#....L....#", "####A###########B####", "#....E....#....E....#", "#####################"], "cfg": {"mirror": true, "levers": ["b", "a"]}},
+{"t": "Fajr Lookout", "hint": "Before dawn, light the safe path for each other from the two towers.", "map": ["#######################", "#1..V..#?????????#..V.#", "#......#+++++????#....#", "#......++??+?+++++....#", "#2.....#???+++???#..E.#", "#......#?????????#..E.#", "#######################"], "cfg": {"dark": "w"}},
+{"t": "Rivers of Jannah", "hint": "Walking in step, build bridges over both rivers.", "map": ["######################", "#1....o...~.....o..~E#", "#.........~........~.#", "#...o.....~.........~#", "######################", "#2.....o..~.......o~.#", "#.........~........~E#", "#....o....~..........#", "######################"], "cfg": {"linked": true}},
+{"t": "Gates of Jannah", "hint": "Four doors, four plates, two boxes. Every door is opened by your partner, so plan who holds what.", "map": ["######################", "#1...#....#.........E#", "#.o..A..d.C..........#", "#...b#....#..........#", "######################", "#....#....#..........#", "#.a..B.o..D..........#", "#2...#...c#.........E#", "######################"]},
+{"t": "Hand in Hand Forever", "hint": "Hold hands tightly: never more than two steps apart, even where the lights split your paths.", "map": ["#####################", "#1.....h.......w...E#", "#2..#..h..##...w...E#", "#...#.....##..#.....#", "#.....w...##..h.....#", "#####################"], "cfg": {"tether": 2}},
+{"t": "Mirror of Hearts", "hint": "Mirror steps to the two green buttons, then press action together to open both doors.", "map": ["#####################", "#1........#........2#", "#..#...#..#...#..#..#", "#....S....#.......S.#", "#.#....#..#..#....#.#", "#.........#.........#", "####C###########C####", "#....E....#....E....#", "#####################"], "cfg": {"mirror": true, "sync": "c"}},
+{"t": "Enter Together", "hint": "The last door. Everything you learned together: a code, a heavy chest, a lever and the green buttons. Bismillah!", "map": ["########################", "#1...V....#.......#....#", "#.........A.......B..L.#", "#..5..6...#...O...#....#", "#.........#...b...##D###", "#2..7..8..#.......#S..S#", "#.........#.......###C##", "###################E.E##", "########################"], "cfg": {"code": [7, 5, 8, 6], "codeGate": "a", "levers": ["d"], "sync": "c"}});
+BOND.push(
+"Tell each other one time this year when the other helped you without being asked.",
+"Take turns finishing this sentence: “I feel closest to you when…”",
+"Ask your spouse: “What is one heavy thing on your mind that I can help carry?”",
+"Walk somewhere together today, even for five minutes, without phones.",
+"Plan one small thing to save up for together.",
+"Share one thing your spouse taught you that you are grateful for.",
+"Make dua for each other by name, quietly, then tell each other what you asked for.",
+"Decide on a fair way to share one chore you both dislike.",
+"Tell your spouse something about them that makes you proud.",
+"Ask: “Is there something I do that hurts you without me knowing?” Listen without defending.",
+"Share a lesson you learned from a hard time you went through together.",
+"Choose one dhikr to say together every evening this week.",
+"Tell each other what your favourite moment of the day usually is.",
+"Thank your spouse for one thing they do for the family that often goes unseen.",
+"Agree on one gentle word or sign you can use when either of you needs a pause in an argument.",
+"Share one fear you have about the future, and let your spouse reassure you.",
+"Tell your spouse how they make hard days easier.",
+"Plan a simple gift for your spouse that costs nothing.",
+"Read one short hadith about kindness together and talk about it.",
+"Ask each other: “What would make our home feel more peaceful?”",
+"Recite Surah al-Ikhlas together, three times.",
+"Tell your spouse one thing you would like to learn from them.",
+"Share a favourite childhood memory your spouse has never heard.",
+"Promise to say one kind thing to each other before sleep tonight.",
+"Ask: “How did you feel when we met for the first time?”",
+"Choose a day this week to eat together with no screens at the table.",
+"Tell each other one thing you will try to be more patient about.",
+"Make dua together for someone you both love who is struggling.",
+"Share three things you are grateful to Allah for today, taking turns.",
+"Tell your spouse something new you noticed and admired in them while playing.",
+"Talk about one way you can support each other’s deen more this month.",
+"Ask: “What is one thing I can stop doing that would make you happier?”",
+"Share a favourite verse of the Qur’an and why it touches you.",
+"Take turns giving each other a short, sincere apology for something small.",
+"Plan a visit together to family or a friend who would love to see you.",
+"Say “I trust you” and name one reason why.",
+"Each choose one bad habit and agree to help the other drop theirs.",
+"Talk about how you can make your mornings start better together.",
+"Tell your spouse one thing you have never thanked them for.",
+"Agree on one act of charity you will give together this week.",
+"Remember a time you laughed together until it hurt, and tell the story again.",
+"Ask: “When do you feel most loved by me?” and really listen.",
+"Make dua that Allah keeps your hearts united.",
+"Share one dream for your old age together.",
+"Give each other a name or nickname of kindness for today.",
+"Say “Astaghfirullah” together ten times and ask Allah to forgive you both.",
+"Tell each other one thing you are looking forward to next month.",
+"Pick one evening to read the Qur’an together this week.",
+"Ask your spouse: “What do you need more of from me right now?”",
+"Share a quality your spouse has that you hope your children will have.",
+"Choose one book or lecture to learn from together.",
+"Tell your spouse how they have helped you grow as a person.",
+"Plan one way to make your spouse’s routine easier tomorrow.",
+"Say the dua for parents together: “Rabbir hamhuma kama rabbayani saghira.”",
+"Share what you think your biggest strength is as a couple.",
+"Smile at each other for ten seconds without speaking. Smiling is sadaqah.",
+"Tell your spouse one way they show mercy that you admire.",
+"Talk about one goal you want to reach together this year.",
+"Ask each other: “Is there anything you have been wanting to tell me?”",
+"Give each other a warm hug and say “I am grateful for you.”",
+"Plan to pray Fajr together tomorrow, in shaa Allah.",
+"Share one thing you would like your home to be known for.",
+"Tell each other something you forgive and let go of today.",
+"Make dua together for the Ummah and for peace.",
+"Talk about a time you felt Allah’s help in your marriage.",
+"Tell your spouse what Jannah means to you, and who you want there with you.",
+"Thank each other for walking all of these tasks together, and for your patience.",
+"Promise each other one thing you will keep doing for the rest of your lives.",
+"Write a short note to each other and keep it somewhere safe.",
+"Make this dua together: “Rabbana atina fid-dunya hasanah wa fil-akhirati hasanah wa qina ‘adhaban-nar.”");
 </script>
 <script>(function(){
 'use strict';
@@ -491,7 +654,7 @@ function cfg(){return (LEVELS[G.lvl].cfg)||{};}
 function load(i){
   var L=LEVELS[i];
   G={lvl:i,H:L.map.length,W:L.map[0].length,map:[],boxes:[],goats:[],plates:{},gatesPresent:{},gates:{},levers:{},leverAt:{},latch:{},timers:{},
-     codeProg:0,syncT:{1:-99,2:-99},t:0,done:false,left:0,P:[],msg:'',msgT:0,lookout:false,shake:0,celebrate:0,fx:[]};
+     codeProg:0,syncT:{1:-99,2:-99},t:0,done:false,left:0,P:[],msg:'',msgT:0,lookout:false,shake:0,celebrate:0,fx:[],turn:1,stepsLeft:0};
   var li=0;
   for(var y=0;y<G.H;y++){
     var row=[];
@@ -508,7 +671,7 @@ function load(i){
     }
     G.map.push(row);
   }
-  G.orig=L.map.slice();
+  G.orig=L.map.slice();G.stepsLeft=(L.cfg&&L.cfg.steps)||0;
   computeGates();
   G.msg=L.hint;G.msgT=6;
   buildStatic();
@@ -580,8 +743,18 @@ function peek(p,d,px,py,ox,oy){
 
 /* ================= actions ================= */
 function startMove(p,x,y,spd){p.fx=p.x;p.fy=p.y;p.x=x;p.y=y;p.mt=0;p.moving=true;p.spd=spd||STEP;}
-function attempt(p,d){
+function nm(id){return SV.names[id-1];}
+function doMove(p,r){
+  if(r.box){
+    var b=r.box;b.fx=b.x;b.fy=b.y;b.x=r.bx;b.y=r.by;b.mt=0;sfx('push');
+    if(r.heavy){var q=other(p);startMove(q,p.x,p.y);q.steps++;}
+  }
+  startMove(p,r.x,r.y,p.slide?SLIDE:STEP);p.steps++;
+}
+function spend(){if(cfg().steps)G.stepsLeft--;}
+function attempt(p,d,cont){
   p.face=d;
+  if(cfg().turns&&!cont&&G.turn!==p.id){if(p.bump<=0){say('It is '+nm(G.turn)+'’s turn. Take turns: one step each (✋ passes your turn).');p.bump=0.8;}return false;}
   var r=plan(p,d);
   if(!r.ok){
     if(p.bump<=0){
@@ -594,12 +767,31 @@ function attempt(p,d){
     }
     return false;
   }
-  if(r.box){
-    var b=r.box;b.fx=b.x;b.fy=b.y;b.x=r.bx;b.y=r.by;b.mt=0;sfx('push');
-    if(r.heavy){var q=other(p);startMove(q,p.x,p.y);q.steps++;}
-  }
-  startMove(p,r.x,r.y,p.slide?SLIDE:STEP);p.steps++;
+  doMove(p,r);
+  if(!cont){if(cfg().turns)G.turn=3-p.id;spend();}
   return true;
+}
+/* walk in step / mirror steps: one move moves both of you */
+function flip(d){return d==='L'?'R':d==='R'?'L':d;}
+function linkedStep(d){
+  var a=G.P[0],b=G.P[1],da=d,db=cfg().mirror?flip(d):d,ha=a.hold,hb=b.hold;
+  a.face=da;b.face=db;a.hold=da;b.hold=db;
+  var ra0=plan(a,da),rb0=plan(b,db),done=false;
+  if(ra0.ok&&ra0.heavy){doMove(a,ra0);done=true;}
+  else if(rb0.ok&&rb0.heavy){doMove(b,rb0);done=true;}
+  else{
+    var rb=rb0,ra=plan(a,da,rb.ok?rb.x:b.x,rb.ok?rb.y:b.y);
+    rb=plan(b,db,ra.ok?ra.x:a.x,ra.ok?ra.y:a.y);
+    if(ra.ok&&!rb.ok)ra=plan(a,da,b.x,b.y);
+    if(ra.ok&&rb.ok&&ra.x===rb.x&&ra.y===rb.y)rb={ok:false};
+    if(ra.ok&&rb.ok&&ra.x===b.x&&ra.y===b.y&&rb.x===a.x&&rb.y===a.y){ra={ok:false};rb={ok:false};}
+    if(ra.ok&&rb.ok&&ra.box&&ra.box===rb.box)rb={ok:false};
+    if(ra.ok){doMove(a,ra);done=true;}
+    if(rb.ok){doMove(b,rb);done=true;}
+  }
+  a.hold=ha;b.hold=hb;
+  if(done)spend();
+  else if(a.bump<=0){say(cfg().mirror?'Mirror steps: you move together, the wife moves the opposite way left and right.':'You walk in step: one move moves both of you. Use the walls to line up.');a.bump=0.8;}
 }
 function arrive(p){
   p.moving=false;var c=T(p.x,p.y);
@@ -607,13 +799,13 @@ function arrive(p){
     if(G.left===0)say('Everything collected, MashaAllah! Now meet at the doorways.');}
   if(c==='?'){sfx('fall');resetRoom('Crack! The ground gave way. Watch the lookout path and try again together.');return;}
   if(c>='5'&&c<='9'&&cfg().code)stepCode(+c);
-  if(c==='='&&p.slide){if(!attempt(p,p.slide))p.slide=null;return;}
-  if(c==='='){p.slide=p.face;if(!attempt(p,p.slide))p.slide=null;return;}
+  if(c==='='&&p.slide){if(!attempt(p,p.slide,true))p.slide=null;return;}
+  if(c==='='){p.slide=p.face;if(!attempt(p,p.slide,true))p.slide=null;return;}
   p.slide=null;
 }
 function stepCode(s){
   var C=cfg(),code=C.code;if(G.latch[C.codeGate])return;
-  if(!G.lookout){say('Someone must keep watch on the lookout 👀 to see the code.');return;}
+  if(!G.lookout){say('Someone must stand on the lookout tower to see the code.');return;}
   if(code[G.codeProg]===s){G.codeProg++;sfx('ok');
     if(G.codeProg===code.length){G.latch[C.codeGate]=true;sfx('open');say('The code is right, MashaAllah! A door has opened.');}
   }else{G.codeProg=0;sfx('bad');say('Not that one. The code starts again from the first symbol.');}
@@ -621,12 +813,14 @@ function stepCode(s){
 function action(p){
   if(G.done)return;
   var c=T(p.x,p.y),k=p.x+','+p.y;
-  if(c==='L'&&!p.moving){var l=G.leverAt[k];G.levers[l]=!G.levers[l];sfx('lever');say(G.levers[l]?'Lever pulled. A door opened somewhere!':'Lever back. The door closed.');computeGates();return;}
+  if(c==='L'&&!p.moving){var ls=G.leverAt[k];for(var li2=0;li2<ls.length;li2++){var l=ls.charAt(li2);G.levers[l]=!G.levers[l];}sfx('lever');say(ls.length>1?'Lever pulled. Doors changed: one opened, one may have closed!':G.levers[ls]?'Lever pulled. A door opened somewhere!':'Lever back. The door closed.');computeGates();return;}
   if(c==='S'&&!p.moving){
     G.syncT[p.id]=G.t;var q=other(p);
     if(T(q.x,q.y)==='S'&&G.t-G.syncT[q.id]<SYNC_WIN){var s=cfg().sync;if(!G.latch[s]){G.latch[s]=true;sfx('open');say('Together! The door opens. Alhamdulillah.');pop(p.x,p.y,'#3cb371');pop(q.x,q.y,'#3cb371');}}
     else {sfx('tap');say(T(q.x,q.y)==='S'?'Press at the same moment! Count “1, 2, 3” together.':'Your partner needs to stand on the other green button.');}
+    return;
   }
+  if(cfg().turns&&G.turn===p.id&&!p.moving){G.turn=3-p.id;sfx('tap');say(nm(p.id)+' waits. Now it is '+nm(G.turn)+'’s turn.');}
 }
 function knockBack(p){
   var sx=p.sx,sy=p.sy,q=other(p);
@@ -644,6 +838,7 @@ function computeGates(){
     if(pl&&pl.length){var n=0;for(var i=0;i<pl.length;i++)if(pressed(pl[i][0],pl[i][1]))n++;ok=all.indexOf(l)>=0?n===pl.length:n>0;}
     if(ok&&tm[l])G.timers[l]=G.t+tm[l];
     var open=ok||(tm[l]&&G.t<G.timers[l])||!!G.latch[l]||!!G.levers[l];
+    if((C.inverse||[]).indexOf(l)>=0)open=!open; /* reverse door: closes when its plate or lever is used */
     if(!open&&G.gates[l]){ // never close on someone
       for(var y=0;y<G.H;y++)for(var x=0;x<G.W;x++)if(G.map[y][x]===l.toUpperCase()&&(playerAt(x,y)||boxAt(x,y)))open=true;
     }
@@ -660,8 +855,9 @@ function update(dt){
   for(i=0;i<2;i++){
     var p=G.P[i];if(p.bump>0)p.bump-=dt;
     if(p.moving){p.mt+=dt/p.spd;if(p.mt>=1){p.mt=1;arrive(p);if(G!==g0)return;}}
-    if(!p.moving&&p.hold&&!G.done&&!G.overlay)attempt(p,p.hold);
+    if(!p.moving&&p.hold&&!G.done&&!G.overlay&&!(cfg().linked||cfg().mirror))attempt(p,p.hold);
   }
+  if((cfg().linked||cfg().mirror)&&!G.P[0].moving&&!G.P[1].moving&&!G.done&&!G.overlay){var ld=G.P[0].hold||G.P[1].hold;if(ld)linkedStep(ld);}
   for(i=0;i<G.boxes.length;i++){var b=G.boxes[i];if(b.mt<1){b.mt+=dt/STEP;if(b.mt>=1){b.mt=1;var bc=T(b.x,b.y);
     if(bc==='~'){G.map[b.y][b.x]='_';G.boxes.splice(i,1);i--;sfx('splash');pop(b.x,b.y,'#7fc8ef');}
     else if(bc==='?'){G.map[b.y][b.x]='_';G.boxes.splice(i,1);i--;}}}}
@@ -671,6 +867,7 @@ function update(dt){
       else{var hit=playerAt(nx,g.y);if(hit)knockBack(hit);g.fx=g.x;g.fy=g.y;g.x=nx;g.mt=0;}}}
   computeGates();
   checkWin();
+  if(cfg().steps&&G.stepsLeft<=0&&!G.done&&!G.P[0].moving&&!G.P[1].moving){sfx('fall');resetRoom('Out of steps! Plan the route together first, then try again.');return;}
   for(i=G.fx.length-1;i>=0;i--){G.fx[i].t+=dt;if(G.fx[i].t>0.8)G.fx.splice(i,1);}
 }
 function checkWin(){
@@ -790,12 +987,13 @@ function draw(){
     else if(ch==='*'){var bob=Math.sin(tt*3+x+y)*TS*0.05;
       if(P.star==='drop'){c.fillStyle='#3aa8e0';c.beginPath();c.moveTo(cx,cy-TS*0.25+bob);c.quadraticCurveTo(cx+TS*0.22,cy+TS*0.05+bob,cx,cy+TS*0.2+bob);c.quadraticCurveTo(cx-TS*0.22,cy+TS*0.05+bob,cx,cy-TS*0.25+bob);c.fill();}
       else{c.fillStyle=P.star==='firefly'?'#fff38a':'#ffc93c';c.shadowColor='#ffe680';c.shadowBlur=P.star==='firefly'?14:6;star(c,cx,cy+bob,TS*0.24);c.shadowBlur=0;}}
-    else if(ch==='L'){var on=G.levers[G.leverAt[x+','+y]];c.fillStyle='#6b6b6b';c.fillRect(cx-TS*0.25,cy+TS*0.12,TS*0.5,TS*0.14);
+    else if(ch==='L'){var lvk=G.leverAt[x+','+y].charAt(0),on=G.levers[lvk];c.fillStyle='#6b6b6b';c.fillRect(cx-TS*0.25,cy+TS*0.12,TS*0.5,TS*0.14);
       c.strokeStyle='#444';c.lineWidth=Math.max(2,TS*0.08);c.beginPath();c.moveTo(cx,cy+TS*0.15);c.lineTo(cx+(on?1:-1)*TS*0.22,cy-TS*0.22);c.stroke();
-      c.fillStyle=on?GATE_COL[G.leverAt[x+','+y]]:'#c94040';c.beginPath();c.arc(cx+(on?1:-1)*TS*0.22,cy-TS*0.22,TS*0.1,0,7);c.fill();}
+      c.fillStyle=on?GATE_COL[lvk]:'#c94040';c.beginPath();c.arc(cx+(on?1:-1)*TS*0.22,cy-TS*0.22,TS*0.1,0,7);c.fill();}
     else if(ch==='S'){var lit=G.latch[cfg().sync]||(G.t-Math.max(G.syncT[1],G.syncT[2])<0.3);c.fillStyle='#2e7d4f';c.beginPath();c.arc(cx,cy,TS*0.38,0,7);c.fill();
       c.fillStyle=lit?'#9ff0b8':'#4cc27b';c.beginPath();c.arc(cx,cy-TS*0.04,TS*0.28,0,7);c.fill();label(c,'✋',cx,cy-TS*0.03,'#fff',0.32);}
-    else if(ch==='V'){c.fillStyle='#8a5a2b';c.fillRect(cx-TS*0.3,cy-TS*0.05,TS*0.6,TS*0.35);c.fillStyle=G.lookout?'#ffd34d':'#c99a5b';c.fillRect(cx-TS*0.36,cy-TS*0.3,TS*0.72,TS*0.25);label(c,'👁',cx,cy-TS*0.17,'#000',0.26);}
+    else if(ch==='V'){c.fillStyle='#8a5a2b';c.fillRect(cx-TS*0.3,cy-TS*0.05,TS*0.6,TS*0.35);c.fillStyle=G.lookout?'#ffd34d':'#c99a5b';c.fillRect(cx-TS*0.36,cy-TS*0.3,TS*0.72,TS*0.25);c.fillStyle=G.lookout?'#ffd34d':'#e7d3a8';c.fillRect(cx-TS*0.1,cy-TS*0.42,TS*0.2,TS*0.14);c.beginPath();c.arc(cx,cy-TS*0.42,TS*0.1,Math.PI,0);c.fill();
+      c.fillStyle='#3a8a6a';c.beginPath();c.arc(cx+TS*0.02,cy-TS*0.6,TS*0.07,0,7);c.fill();c.fillStyle=G.lookout?'#ffd34d':'#e7d3a8';c.beginPath();c.arc(cx+TS*0.055,cy-TS*0.61,TS*0.06,0,7);c.fill();}
     else if(ch>='5'&&ch<='9'){var done=cfg().code&&G.latch[cfg().codeGate];c.fillStyle=done?'rgba(60,180,110,.4)':'rgba(255,255,255,.55)';c.beginPath();c.arc(cx,cy,TS*0.4,0,7);c.fill();
       c.strokeStyle='rgba(0,0,0,.2)';c.lineWidth=1;c.stroke();label(c,SYM[ch],cx,cy+TS*0.02,'#000',0.46);}
     else if(ch==='E'){var gl=0.5+0.3*Math.sin(tt*3);c.fillStyle='rgba(255,214,90,'+gl*0.55+')';c.beginPath();c.arc(cx,cy,TS*0.45,0,7);c.fill();
@@ -818,6 +1016,7 @@ function draw(){
   G.goats.forEach(function(g){var e=ease(g.mt),X=lerp(g.fx,g.x,e)*TS+TS/2,Y=lerp(g.fy,g.y,e)*TS+TS/2;c.save();c.translate(X,Y);if(g.dx<0)c.scale(-1,1);label(c,'🐐',0,0,'#000',0.8);c.restore();});
   // players (draw lower one last)
   var order=G.P.slice().sort(function(a,b){return a.y-b.y;});
+  if(cfg().turns){var tp=G.P[G.turn-1],tq=pos(tp);c.strokeStyle=tp.id===1?'#3b82c4':'#c4508a';c.lineWidth=3;c.globalAlpha=0.6+0.3*Math.sin(tt*6);c.beginPath();c.ellipse(tq[0],tq[1]+TS*0.42,TS*0.45,TS*0.16,0,0,7);c.stroke();c.globalAlpha=1;}
   order.forEach(function(p){var q=pos(p);person(c,q[0],q[1],p);});
   // effects
   G.fx.forEach(function(f){var r=TS*(0.2+f.t),a=1-f.t/0.8;c.strokeStyle=f.col;c.globalAlpha=a;c.lineWidth=3;c.beginPath();c.arc(f.x*TS+TS/2,f.y*TS+TS/2,r,0,7);c.stroke();c.globalAlpha=1;});
@@ -835,6 +1034,8 @@ function draw(){
   var cp=document.getElementById('codep');
   if(cfg().code&&G.lookout&&!G.latch[cfg().codeGate]){cp.style.display='flex';cp.innerHTML='<span>Code:</span>'+cfg().code.map(function(s,i){return '<b class="'+(i<G.codeProg?'got':'')+'">'+SYM[s]+'</b>';}).join('');}
   else cp.style.display='none';
+  var bd='';if(cfg().turns)bd+='<span class="t'+G.turn+'">'+nm(G.turn)+'’s turn</span>';if(cfg().steps)bd+='<span class="st'+(G.stepsLeft<=5?' low':'')+'">👣 '+G.stepsLeft+' steps left</span>';if(cfg().linked)bd+='<span>🤝 walk in step</span>';if(cfg().mirror)bd+='<span>🪞 mirror steps</span>';
+  var be=document.getElementById('badge');if(be.getAttribute('data-v')!==bd){be.innerHTML=bd;be.setAttribute('data-v',bd);be.style.display=bd?'flex':'none';}
   var m=document.getElementById('msg');if(G.msgT>0&&G.msg){m.textContent=G.msg;m.style.opacity=Math.min(1,G.msgT*2);m.style.display='block';}else m.style.display='none';
 }
 var darkC=null;function getDark(){var w=G.W*TS,h=G.H*TS;if(!darkC||darkC.width!==w||darkC.height!==h){darkC=document.createElement('canvas');darkC.width=w;darkC.height=h;}return darkC;}
@@ -897,7 +1098,7 @@ function next(){
 }
 function chReadyUI(){[1,2].forEach(function(k){var b=$('c'+k);b.classList.toggle('on',ready[k]);b.textContent=(ready[k]?'✓ ':'')+SV.names[k-1];});}
 function renderSelect(){
-  var h='';CHAPTERS.forEach(function(ch,ci){h+='<div class="chap"><h3>'+ch.name+' <span class="ar">'+ch.ar+'</span></h3><div class="tasks">';
+  var h='';CHAPTERS.forEach(function(ch,ci){if(ci===0)h+='<h2 class="part">Part 1 · First steps together</h2>';if(ci===6)h+='<h2 class="part">Part 2 · Deeper together <small>(harder)</small></h2>';h+='<div class="chap"><h3>'+ch.name+' <span class="ar">'+ch.ar+'</span></h3><div class="tasks">';
     for(var j=0;j<5;j++){var i=ci*5+j,lock=i>SV.unlocked,d=SV.done[i];h+='<button class="tk'+(d?' done':'')+'" data-lv="'+i+'"'+(lock?' disabled':'')+'><b>'+(i+1)+'</b><span>'+(lock?'🔒':LEVELS[i].t)+'</span></button>';}
     h+='</div></div>';});
   $('selList').innerHTML=h;
@@ -1005,7 +1206,10 @@ resize();initUI();show('title');requestAnimationFrame(frame);
 if('serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('sw.js').catch(function(){});}
 
 /* hooks for automated testing */
-window.HIH={get G(){return G;},load:load,update:update,action:function(id){action(G.P[id-1]);},hold:function(id,d){held[id]=d?[d]:[];setHold(id);},
+window.HIH={snap:function(){return {map:G.map.map(function(r){return r.join('');}),P:G.P.map(function(p){return [p.x,p.y,p.face];}),boxes:G.boxes.map(function(b){return [b.x,b.y,b.heavy];}),levers:Object.assign({},G.levers),latch:Object.assign({},G.latch),codeProg:G.codeProg,left:G.left,turn:G.turn,stepsLeft:G.stepsLeft,gates:Object.assign({},G.gates)};},
+  restore:function(s){G.map=s.map.map(function(r){return r.split('');});s.P.forEach(function(q,i){var p=G.P[i];p.x=p.fx=q[0];p.y=p.fy=q[1];p.face=q[2];p.mt=1;p.moving=false;p.slide=null;p.hold=null;p.bump=0;});
+    G.boxes=s.boxes.map(function(b){return {x:b[0],y:b[1],heavy:b[2],fx:b[0],fy:b[1],mt:1};});G.levers=Object.assign({},s.levers);G.latch=Object.assign({},s.latch);G.codeProg=s.codeProg;G.left=s.left;G.turn=s.turn;G.stepsLeft=s.stepsLeft;G.gates=Object.assign({},s.gates);G.done=false;G.overlay=false;held={1:[],2:[]};},
+  get G(){return G;},load:load,update:update,action:function(id){action(G.P[id-1]);},hold:function(id,d){held[id]=d?[d]:[];setHold(id);},
   peek:peek,plan:plan,T:T,set manual(v){manual=v;},get overlay(){return overlay;},show:show,setReady:setReady,LEVELS:LEVELS,boxAt:boxAt};
 })();
 </script>
