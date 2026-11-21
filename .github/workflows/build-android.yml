@@ -71,8 +71,14 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: actions/configure-pages@v5
+      - name: Put both games on the site
+        run: |
+          mkdir -p _site
+          cp -r app/src/main/assets/www/. _site/
+          mkdir -p _site/hand-in-hand
+          cp -r hand-in-hand/app/src/main/assets/www/. _site/hand-in-hand/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: app/src/main/assets/www
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4

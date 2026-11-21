@@ -1,0 +1,61 @@
+name: Build Hand in Hand (Android)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['hand-in-hand/**', '.github/workflows/build-hand-in-hand.yml']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: hand-in-hand
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14.3'
+
+      - name: Add the upload key (same key as Rooftop Quickscope)
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            printf '%s' "$KEYSTORE_BASE64" | tr -d ' \r\n\t' | base64 -d > app/upload-key.jks
+            keytool -list -keystore app/upload-key.jks -storepass "$KEYSTORE_PASSWORD" >/dev/null 2>&1 || { echo "::error::The key and password do not match."; exit 1; }
+            echo "Upload key found."
+          else
+            echo "::warning::No upload key: the build is test-only."
+          fi
+
+      - name: Build APK and App Bundle
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: gradle --no-daemon assembleRelease bundleRelease
+
+      - name: Save the app files
+        uses: actions/upload-artifact@v4
+        with:
+          name: hand-in-hand-android
+          path: |
+            hand-in-hand/app/build/outputs/apk/release/*.apk
+            hand-in-hand/app/build/outputs/bundle/release/*.aab
+
+      - name: Publish the phone download link
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp app/build/outputs/apk/release/app-release.apk hand-in-hand.apk
+          gh release delete hand-in-hand --yes --cleanup-tag || true
+          gh release create hand-in-hand hand-in-hand.apk --title "Hand in Hand — Android app" --notes "Open this page on an Android phone and tap hand-in-hand.apk to install. A cooperative adventure for husband and wife: 30 tasks, works offline." --latest=false

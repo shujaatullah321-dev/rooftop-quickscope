@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#1f6f63">
+<meta name="description" content="Hand in Hand: a cooperative walking adventure for a Muslim husband and wife. 30 tasks you can only solve together, on one phone, tablet or computer.">
+<title>Hand in Hand — يَدًا بِيَد</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:#1f6f63;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#2b2420;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:none}
+canvas{position:fixed;inset:0;display:block}
+.ar{font-family:"Noto Naskh Arabic","Geeza Pro","Traditional Arabic","Amiri",serif;direction:rtl}
+#hud{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;gap:10px;padding:6px 10px calc(6px) 10px;padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right));background:rgba(255,255,255,.82);backdrop-filter:blur(6px);z-index:5;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+#hudT{font-size:13px;color:#5b5046;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hudT b{color:#1f6f63}
+#hudN{flex:1;text-align:center;font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hb{border:0;background:#1f6f63;color:#fff;border-radius:10px;font-size:16px;min-width:40px;height:36px;padding:0 10px;font-weight:800;cursor:pointer}
+#codep{position:fixed;top:52px;left:50%;transform:translateX(-50%);display:none;gap:6px;align-items:center;background:#fff8e1;border:2px solid #e0a23a;border-radius:14px;padding:6px 12px;z-index:6;font-weight:800;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+#codep b{font-size:24px;line-height:1;padding:2px 4px;border-radius:8px}
+#codep b.got{background:#bdeccb}
+#msg{position:fixed;bottom:max(8px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);max-width:min(92vw,720px);background:rgba(30,40,40,.86);color:#fff;padding:8px 14px;border-radius:12px;font-size:14px;line-height:1.35;text-align:center;z-index:6;pointer-events:none;display:none}
+#touch{position:fixed;inset:0;z-index:3;display:none}
+body.touch #touch{display:block}
+#touch .half{position:absolute;top:0;bottom:0;width:50%}
+#touch .half.l{left:0}#touch .half.r{right:0;border-left:1px dashed rgba(0,0,0,.08)}
+.act{position:absolute;bottom:calc(6px + env(safe-area-inset-bottom));width:64px;height:64px;border-radius:50%;border:3px solid rgba(255,255,255,.9);color:#fff;font-size:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:.72;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.act small{font-size:10px;font-weight:800;max-width:66px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.act.down{transform:scale(.92);opacity:1}
+#a1{left:max(14px,env(safe-area-inset-left))}#a2{right:max(14px,env(safe-area-inset-right))}
+.act.p1{background:#3b82c4}.act.p2{background:#c4508a}
+.stk{position:fixed;width:100px;height:100px;border-radius:50%;border:3px solid rgba(255,255,255,.7);background:rgba(0,0,0,.12);pointer-events:none;z-index:4}
+.stk i{position:absolute;left:30px;top:30px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.85)}
+.stk.p1 i{background:#9cc6ef}.stk.p2 i{background:#f0a8cb}
+.ov{position:fixed;inset:0;z-index:10;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(20,40,38,.55);backdrop-filter:blur(3px);overflow:auto}
+.card{background:#fffaf2;border-radius:22px;max-width:640px;width:100%;padding:22px 22px 18px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:100%;overflow:auto;text-align:center}
+.card h1{font-size:30px;color:#1f6f63;line-height:1.1}
+.card h1 .ar{display:block;font-size:30px;color:#c0703f;margin-top:4px}
+.card p{line-height:1.5;margin:8px 0;color:#4a4038}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:12px 0}
+.btn{border:0;border-radius:14px;padding:12px 20px;font-size:17px;font-weight:800;cursor:pointer;background:#e9e1d4;color:#2b2420}
+.btn.pri{background:#1f6f63;color:#fff}
+label.f{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:13px;text-align:left;color:#5b5046}
+label.f input{font-size:16px;padding:9px 10px;border-radius:10px;border:2px solid #e0d6c6;width:150px;-webkit-user-select:text;user-select:text}
+#abaya{display:flex;gap:6px}#abaya button{width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px #ccc;cursor:pointer}#abaya button.on{box-shadow:0 0 0 3px #1f6f63}
+.chk{display:flex;gap:6px;align-items:center;font-size:14px}
+.say{font-size:52px;color:#1f6f63;line-height:1.3;margin:4px 0}
+.tr{font-size:24px;font-weight:900;color:#c0703f}
+.bond{background:#fff1dc;border:2px dashed #e0a23a;border-radius:16px;padding:12px;margin:12px 0;font-size:17px;font-weight:700;color:#5a3d1c}
+.bond small{display:block;font-weight:800;color:#c0703f;font-size:12px;letter-spacing:.06em;margin-bottom:4px}
+.rdy{border:0;border-radius:14px;padding:12px 14px;font-size:15px;font-weight:800;cursor:pointer;min-width:200px;color:#fff;opacity:.85}
+.rdy.p1{background:#3b82c4}.rdy.p2{background:#c4508a}.rdy.on{opacity:1;box-shadow:0 0 0 4px #ffd34d}
+.ayah{font-size:28px;line-height:1.9;color:#1f6f63;margin:8px 0}
+#selList{text-align:left}
+.chap h3{font-size:16px;margin:12px 0 6px;color:#1f6f63}.chap h3 .ar{color:#c0703f;font-size:18px}
+.tasks{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.tk{border:0;border-radius:12px;background:#efe6d6;padding:8px 6px;cursor:pointer;display:flex;flex-direction:column;gap:2px;align-items:center;min-height:62px;font-family:inherit}
+.tk b{font-size:18px;color:#1f6f63}.tk span{font-size:10.5px;line-height:1.2;color:#5b5046}
+.tk.done{background:#cdebd8}.tk.done b::after{content:' ✓'}
+.tk[disabled]{opacity:.5;cursor:default}
+.how{text-align:left;font-size:15px}.how li{margin:6px 0 6px 18px;line-height:1.45}
+.keys{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;margin:10px 0}
+.keys div{background:#f3ece0;border-radius:12px;padding:10px;font-size:14px}
+#rot{position:fixed;inset:0;z-index:20;background:#1f6f63;color:#fff;display:none;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px;font-weight:800;line-height:1.5}
+@media (orientation:portrait){body.touch #rot{display:flex}}
+@media (max-height:420px){.card{padding:14px}.say{font-size:38px}.card h1{font-size:24px}.ayah{font-size:22px}.bond{font-size:15px;margin:8px 0}}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<div id="hud"><div id="hudT"></div><div id="hudN"></div><button class="hb" data-go="restart" title="Restart this task (R)">↻</button><button class="hb" data-go="pause" title="Menu (Esc)">☰</button></div>
+<div id="codep"></div>
+<div id="msg"></div>
+<div id="touch"><div class="half l"></div><div class="half r"></div><div id="sticks"></div><button class="act p1" id="a1">✋</button><button class="act p2" id="a2">✋</button></div>
+
+<div class="ov" id="title"><div class="card">
+ <h1>Hand in Hand <span class="ar">يَدًا بِيَد</span></h1>
+ <p>A walking adventure for husband and wife. <b>30 tasks</b> you can only finish <b>together</b>: one device, one side each.</p>
+ <div class="row">
+  <label class="f">Husband’s name<input id="n1" maxlength="12"></label>
+  <label class="f">Wife’s name<input id="n2" maxlength="12"></label>
+ </div>
+ <div class="row" style="align-items:center"><span style="font-weight:700;font-size:13px;color:#5b5046">Abaya colour</span><div id="abaya"></div></div>
+ <div class="row"><label class="chk"><input type="checkbox" id="swap"> Wife plays on the left side</label><label class="chk"><input type="checkbox" id="snd"> Sounds</label></div>
+ <div class="row"><button class="btn pri" data-go="start" id="cont">Start — Bismillah</button><button class="btn" data-go="select">All tasks</button><button class="btn" data-go="howto">How to play</button></div>
+</div></div>
+
+<div class="ov" id="howto"><div class="card how">
+ <h1 style="text-align:center">How to play</h1>
+ <ul>
+  <li>Sit together. On a phone or tablet hold it sideways: the <b>left half</b> moves the husband and the <b>right half</b> moves the wife. Drag your thumb to walk, tap ✋ to act.</li>
+  <li>Every task needs both of you: plates that hold doors, heavy chests you push together, lights only one of you can pass, codes one sees and the other enters.</li>
+  <li>Finish a task by standing on the two glowing doorways together.</li>
+  <li>After each task, take a moment for the little “together moment” before you both tap ready.</li>
+  <li>Stuck? Talk it through, then press ↻ to try the task again.</li>
+ </ul>
+ <div class="keys"><div><b>Husband (keyboard)</b><br>W A S D to walk<br>E or Space to act</div><div><b>Wife (keyboard)</b><br>Arrow keys to walk<br>Enter to act</div></div>
+ <p style="text-align:center;font-size:13px">Two game controllers work too.</p>
+ <div class="row"><button class="btn pri" data-go="title">Back</button></div>
+</div></div>
+
+<div class="ov" id="select"><div class="card">
+ <h1>All tasks</h1><p id="selProg"></p>
+ <div id="selList"></div>
+ <div class="row"><button class="btn" data-go="title">Back</button></div>
+</div></div>
+
+<div class="ov" id="done"><div class="card">
+ <p id="dTask" style="font-weight:800;color:#5b5046"></p>
+ <div class="say ar" id="dSay"></div>
+ <div class="tr" id="dTr"></div>
+ <p id="dEn" style="margin-top:2px"></p>
+ <div class="bond"><small>TOGETHER MOMENT</small><span id="dBond"></span></div>
+ <div class="row"><button class="rdy p1" id="r1"></button><button class="rdy p2" id="r2"></button></div>
+ <p style="font-size:12px;color:#8a7d6e">Each of you taps your own button (or presses your action key).</p>
+</div></div>
+
+<div class="ov" id="chapter"><div class="card">
+ <h1 id="cName" style="font-size:24px"></h1>
+ <div class="ayah ar" id="cAr"></div>
+ <p id="cEn" style="font-size:16px"></p><p id="cRef" style="font-size:13px;color:#8a7d6e"></p>
+ <p style="font-weight:700">Read it to each other, then both tap your name.</p>
+ <div class="row"><button class="rdy p1" id="c1"></button><button class="rdy p2" id="c2"></button></div>
+</div></div>
+
+<div class="ov" id="pause"><div class="card">
+ <h1>Paused</h1>
+ <div class="row"><button class="btn pri" data-go="resume">Continue</button><button class="btn" data-go="restart">Restart task</button><button class="btn" data-go="select">All tasks</button><button class="btn" data-go="title">Main menu</button></div>
+</div></div>
+
+<div id="rot">📱↻<br>Turn your phone sideways.<br><span style="font-weight:600;font-size:16px">Sit side by side: the left half is one of you, the right half is the other.</span></div>
+<script>/* Hand in Hand — 30 tasks.
+   Map legend:
+   #  wall            .  floor           ~  water          T  tree / palm (blocks)
+   1  husband start   2  wife start      E  exit (both must stand on one)
+   A-D gate (closed until opened)        a-d pressure plate (opens gate with same letter)
+   o  box (one person can push)          O  heavy chest (push together: one behind the other)
+   h  blue light: only husband passes    w  pink light: only wife passes
+   x  date (husband collects)            y  rose (wife collects)          *  water drop / star (either collects)
+   L  lever (stand + action)             S  together-button (both press action at the same time)
+   V  lookout (shows codes and safe path while someone stands on it)
+   5-9 symbol tiles (moon, star, sun, heart, drop)   ? cracked ground   + safe hidden path
+   =  sand slide (you keep sliding)      g  goat (bumps you back to the start)
+*/
+var CHAPTERS=[
+ {name:'Our Home',ar:'بَيْتُنَا',theme:'home',
+  end:{ar:'وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُمْ مِنْ أَنْفُسِكُمْ أَزْوَاجًا لِتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَوَدَّةً وَرَحْمَةً',en:'And among His signs is that He created for you spouses from among yourselves so that you find rest in them, and He placed between you love and mercy.',ref:'Qur’an 30:21'}},
+ {name:'The Garden',ar:'الْبُسْتَانُ',theme:'garden',
+  end:{ar:'خَيْرُكُمْ خَيْرُكُمْ لِأَهْلِهِ، وَأَنَا خَيْرُكُمْ لِأَهْلِي',en:'The best of you are those who are best to their families, and I am the best of you to my family.',ref:'Hadith, at-Tirmidhi'}},
+ {name:'The Souq',ar:'السُّوقُ',theme:'souq',
+  end:{ar:'هُنَّ لِبَاسٌ لَكُمْ وَأَنْتُمْ لِبَاسٌ لَهُنَّ',en:'They are a garment for you, and you are a garment for them.',ref:'Qur’an 2:187'}},
+ {name:'The Desert',ar:'الصَّحْرَاءُ',theme:'desert',
+  end:{ar:'فَإِنَّ مَعَ الْعُسْرِ يُسْرًا ۝ إِنَّ مَعَ الْعُسْرِ يُسْرًا',en:'So surely with hardship comes ease. Surely with hardship comes ease.',ref:'Qur’an 94:5–6'}},
+ {name:'Night Oasis',ar:'وَاحَةُ اللَّيْلِ',theme:'night',
+  end:{ar:'وَعَاشِرُوهُنَّ بِالْمَعْرُوفِ',en:'And live with them in kindness.',ref:'Qur’an 4:19'}},
+ {name:'The Masjid at Fajr',ar:'الْمَسْجِدُ عِنْدَ الْفَجْرِ',theme:'masjid',
+  end:{ar:'رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ وَاجْعَلْنَا لِلْمُتَّقِينَ إِمَامًا',en:'Our Lord, grant us from our spouses and children the coolness of our eyes, and make us leaders of the God-conscious.',ref:'Qur’an 25:74'}}
+];
+
+var LEVELS=[
+/* ---------- Chapter 1: Our Home ---------- */
+{t:'Bismillah — Walk Together',hint:'Walk to the two glowing doorways. You both need to stand on one to finish.',map:[
+'####################',
+'#..................#',
+'#.1..............E.#',
+'#..................#',
+'#.2..............E.#',
+'#..................#',
+'####################']},
+{t:'Open the Door for Me',hint:'Stand on a round plate to open the door with the same letter. Take turns helping each other through.',map:[
+'####################',
+'#........#.........#',
+'#.1......A.......E.#',
+'#........#.........#',
+'#.2...a..#..b......#',
+'#........B.......E.#',
+'#........#.........#',
+'####################']},
+{t:'A Helping Push',hint:'Push the box onto the plate so the door stays open for both of you.',map:[
+'####################',
+'#.....#............#',
+'#.1...#............#',
+'#..o..A.........E..#',
+'#.....#............#',
+'#.2.a.#.........E..#',
+'#.....#............#',
+'####################']},
+{t:'Your Path, My Path',hint:'Blue light lets only the husband through, pink light only the wife. Pull your lever to open your partner’s door.',map:[
+'####################',
+'#1.......#L...B...E#',
+'#........h....#....#',
+'#........#....#....#',
+'####################',
+'#........#....#....#',
+'#........w....#....#',
+'#2.......#L...C...E#',
+'####################'],cfg:{levers:['c','b']}},
+{t:'Tidy Up Together',hint:'Husband picks up the dates, wife picks up the roses. Then meet at the doorways.',map:[
+'####################',
+'#1..x.....y....x..E#',
+'#..##..y.##...##...#',
+'#..x...##...y......#',
+'#..##..x...##..y...#',
+'#2...y.......x....E#',
+'####################']},
+/* ---------- Chapter 2: The Garden ---------- */
+{t:'Bridge of Boxes',hint:'Push boxes into the stream to make a bridge. It needs two boxes to cross.',map:[
+'####################',
+'#1.....~~......T..E#',
+'#..o...~~..........#',
+'#......~~...ff.....#',
+'#..o...~~..........#',
+'#2.....~~.......T.E#',
+'####################']},
+{t:'Garden Gates',hint:'One of you holds the plate, the other goes through and pulls the lever that opens the way for both.',map:[
+'####################',
+'#1.......#.....L...#',
+'#........A.........#',
+'#..a.....#.........#',
+'#........#####C#####',
+'#2.......C.........#',
+'#........#....E.E..#',
+'####################'],cfg:{levers:['c']}},
+{t:'The Heavy Chest',hint:'The chest is too heavy for one. Line up behind each other and both push the same way.',map:[
+'####################',
+'#1.................#',
+'#......O......a#.E.#',
+'#2............A....#',
+'#..............#.E.#',
+'####################']},
+{t:'Roses and Dates',hint:'Collect all of your own fruit and flowers among the trees.',map:[
+'####################',
+'#1.x..T....y...T..E#',
+'#..TT.T.TT...TT....#',
+'#.y...x....T..x..y.#',
+'#..TT...TT.T..TT...#',
+'#2...y..x....y..x.E#',
+'####################']},
+{t:'Across the Stream',hint:'Lights first, then boxes, then the lever. Plan it together.',map:[
+'####################',
+'#1....h...~~...L..E#',
+'#.....h.o.~~.......#',
+'#.....#...~~...#B###',
+'#.....w.o.~~...#...#',
+'#2....w...~~...#.E.#',
+'####################'],cfg:{levers:['b']}},
+/* ---------- Chapter 3: The Souq ---------- */
+{t:'Mind the Goats',hint:'Cross the busy street. If a goat bumps you, you go back to the start. Call out to each other when it is safe!',map:[
+'####################',
+'#1....2............#',
+'#g.................#',
+'#.........g........#',
+'#....g.............#',
+'#..................#',
+'#.......E..E.......#',
+'####################']},
+{t:'The Spice Code',hint:'One of you keeps watch on the lookout to see the code. The other steps on the symbols in that order.',map:[
+'####################',
+'#1.....V......#....#',
+'#.............#....#',
+'#..5...6...7..A..E.#',
+'#.............#....#',
+'#2.8.......9..#..E.#',
+'####################'],cfg:{code:[7,5,9,6],codeGate:'a'}},
+{t:'Say Bismillah Together',hint:'Stand on the two green buttons and press action at the same moment. Count to three together!',map:[
+'####################',
+'#1....S.....#......#',
+'#...........#..E...#',
+'#...........A......#',
+'#...........#..E...#',
+'#2....S.....#......#',
+'####################'],cfg:{sync:'a'}},
+{t:'Deliver the Crate',hint:'Push the heavy crate down onto the plate together.',map:[
+'####################',
+'#1.....#...........#',
+'#......#...........#',
+'#..O...A......E.E..#',
+'#..a...#...........#',
+'#2.....#...........#',
+'####################']},
+{t:'Busy Market',hint:'Collect every star. One holds a plate while the other gets through, and goats are about!',map:[
+'####################',
+'#1..*....#....*...E#',
+'#........#.........#',
+'#g.......A......g..#',
+'#...*....#....*....#',
+'#2.a.....#.....a..E#',
+'####################']},
+/* ---------- Chapter 4: The Desert ---------- */
+{t:'Sand Slides',hint:'On sand you keep sliding until something stops you. Reach your lever to open your partner’s door.',map:[
+'####################',
+'#1.=========T..#...#',
+'#..=========...A.E.#',
+'#..====T====..L#...#',
+'################...#',
+'#..====T====..L#...#',
+'#..=========...B.E.#',
+'#2.=========T..#...#',
+'####################'],cfg:{levers:['b','a']}},
+{t:'Hold My Hand',hint:'You are holding hands: you can never be more than 3 steps apart. Find the way out together.',map:[
+'####################',
+'#1.#.....#.....#..E#',
+'#2.#.###.#.###.#.#.#',
+'#..#.#...#...#...#E#',
+'#....#.#####.#####.#',
+'######.......#.....#',
+'####################'],cfg:{tether:3}},
+{t:'Guide Me Across',hint:'The ground is cracked. One stands on the lookout to see the safe path and guides the other across. Then pull the lever.',map:[
+'####################',
+'#.V#??????????#....#',
+'#..#?+++??????#..E.#',
+'#1..++?+??++++.L.E.#',
+'#..#???++++???#....#',
+'#2.#??????????#....#',
+'#..B...............#',
+'####################'],cfg:{levers:['b']}},
+{t:'Caravan Crates',hint:'Both plates must be pressed at once: the heavy chest on one, the box on the other.',map:[
+'####################',
+'#1.......#.........#',
+'#........#.........#',
+'#...O.o..A.....E.E.#',
+'#........#.........#',
+'#2..a..a.#.........#',
+'####################'],cfg:{all:['a']}},
+{t:'Dune Crossing',hint:'Hand in hand across the sliding sand. Stay within 4 steps of each other.',map:[
+'####################',
+'#1.====T=====.....E#',
+'#2.=========T=....E#',
+'#..====T======.....#',
+'####################'],cfg:{tether:4}},
+/* ---------- Chapter 5: Night Oasis ---------- */
+{t:'Lantern Walk',hint:'It is dark. The wife carries the lantern, so stay close to her light.',map:[
+'####################',
+'#1..#......#......E#',
+'#2..#.####.#.####..#',
+'#...#.#..#.#.#..#..#',
+'#.....#..#...#....E#',
+'####################'],cfg:{dark:'w'}},
+{t:'Fireflies',hint:'Catch every glowing star in the dark. The husband has the lantern this time.',map:[
+'####################',
+'#1..*.#...*....#..E#',
+'#2....#.###.##.#.*.#',
+'#..*.....*....*....#',
+'#*...#.###.##.#..*E#',
+'####################'],cfg:{dark:'h'}},
+{t:'Night Gates',hint:'Plates and doors in the dark. Help each other through, one at a time.',map:[
+'####################',
+'#........#.........#',
+'#.1......A.......E.#',
+'#........#.........#',
+'#.2...a..#..b......#',
+'#........B.......E.#',
+'#........#.........#',
+'####################'],cfg:{dark:'h'}},
+{t:'Code of the Stars',hint:'Keep watch at the lookout and read the star code to your partner in the dark.',map:[
+'####################',
+'#1.....V......#....#',
+'#..6.......8..#..E.#',
+'#.............A....#',
+'#..9.......5..#..E.#',
+'#2.....7......#....#',
+'####################'],cfg:{code:[8,6,7,9,5],codeGate:'a',dark:'w'}},
+{t:'Close Together',hint:'Darkness and holding hands: never more than 2 steps apart.',map:[
+'####################',
+'#12.#....#....#....#',
+'#...#.##.#.##.#.##.#',
+'#.#...#....#....#..#',
+'#.#####.####.####.E#',
+'#................E.#',
+'####################'],cfg:{tether:2,dark:'w'}},
+/* ---------- Chapter 6: The Masjid at Fajr ---------- */
+{t:'The Wudu Fountain',hint:'Collect every water drop around the fountain. Each light lets only one of you through.',map:[
+'####################',
+'#1..h.*....*..w..*E#',
+'#...h...~~~...w....#',
+'#...#.*.~~~.*.#....#',
+'#...w...~~~...h....#',
+'#2..w.*....*..h..*E#',
+'####################']},
+{t:'Courtyard Doors',hint:'This plate only holds the door for 2 seconds, too short to make it alone. Hold it for your partner, then return the favour with the lever.',map:[
+'####################',
+'#1............#....#',
+'#.............A..E.#',
+'#.............#....#',
+'#.............B..E.#',
+'#a2...........#.L..#',
+'####################'],cfg:{timed:{a:2},levers:['b']}},
+{t:'The Minbar Puzzle',hint:'Push the heavy chest together, then keep watch and enter the code.',map:[
+'####################',
+'#1.......#....V....#',
+'#........A..5....7.#',
+'#...O....#.........#',
+'#...a....#..6....8.#',
+'#2.......#####B#####',
+'#############E.E####',
+'####################'],cfg:{code:[7,5,8,6],codeGate:'b'}},
+{t:'Path of Light',hint:'Guide your partner across the cracked floor, then press the green buttons together.',map:[
+'####################',
+'#SV#??????????#....#',
+'#..#??++++????#..E.#',
+'#1..+?+??+++?+.S.E.#',
+'#..#+++????+++#....#',
+'#2.#??????????#....#',
+'#..B...............#',
+'####################'],cfg:{sync:'b'}},
+{t:'Together to Jannah',hint:'Everything you have learned: lights, the heavy chest, the code and the final buttons. Say Alhamdulillah together!',map:[
+'####################',
+'#1...h...#....V....#',
+'#....h...A..5...6..#',
+'#....#.O.#.........#',
+'#....w.a.#..7...8..#',
+'#2...w...#####B#####',
+'##########.S...SCEE#',
+'####################'],cfg:{code:[5,7,8,6],codeGate:'b',sync:'c'}}
+];
+
+var SAYINGS=[
+ {ar:'مَا شَاءَ اللهُ',tr:'MashaAllah',en:'This is what Allah has willed'},
+ {ar:'الْحَمْدُ لِلَّهِ',tr:'Alhamdulillah',en:'All praise is for Allah'},
+ {ar:'بَارَكَ اللهُ فِيكُمَا',tr:'Barakallahu feekuma',en:'May Allah bless you both'},
+ {ar:'سُبْحَانَ اللهِ',tr:'SubhanAllah',en:'Glory be to Allah'},
+ {ar:'جَزَاكَ اللهُ خَيْرًا',tr:'Jazakallahu khayran',en:'May Allah reward you with good'},
+ {ar:'تَبَارَكَ اللهُ',tr:'TabarakAllah',en:'Blessed is Allah'},
+ {ar:'اللهُ أَكْبَرُ',tr:'Allahu akbar',en:'Allah is the Greatest'}
+];
+
+var BOND=[
+ 'Say “Bismillah” together and smile at each other.',
+ 'Say “Jazakallahu khayran” to each other for opening the doors.',
+ 'Tell your spouse one small thing they did this week that you appreciated.',
+ 'Hold hands for a moment and say “Alhamdulillah” together.',
+ 'Choose one household job you will do together this week.',
+ 'Make a short dua for your spouse, out loud.',
+ 'Tell each other one quality you love in the other.',
+ 'Share a happy memory from your nikah day.',
+ 'Give your spouse one sincere compliment.',
+ 'Share one dream you have for your family.',
+ 'Ask your spouse: “How can I make your day easier?”',
+ 'Tell your spouse, in your own words, that you are grateful Allah gave them to you.',
+ 'Agree on one sunnah you will practise together.',
+ 'Thank your spouse for their patience with you.',
+ 'Name a place you would love to visit together one day.',
+ 'Plan a time to pray two rak‘ahs together today, in shaa Allah.',
+ 'Ask each other: “What made you smile today?”',
+ 'Forgive each other for any small upset this week, and say it out loud.',
+ 'Choose one short surah to learn together.',
+ 'Tell your spouse what you admired about how they played that task.',
+ 'Sit close and say “SubhanAllah” three times together.',
+ 'Share something you are looking forward to doing together.',
+ 'Tell your spouse one way they help you become a better Muslim.',
+ 'Promise one kind act for your spouse tomorrow.',
+ 'Remind each other of an ayah or hadith you love.',
+ 'Hug your spouse and say “Barakallahu feek / feeki”.',
+ 'Agree on a special meal to cook together this week.',
+ 'Ask: “What is one thing I can do to support your goals?”',
+ 'Make dua together for both of your parents.',
+ 'Make this dua together: “Rabbana hab lana min azwajina wa dhurriyyatina qurrata a‘yun.”'
+];
+</script>
+<script>(function(){
+'use strict';
+/* ================= save ================= */
+var SKEY='hih-save-v1';
+var SV={unlocked:0,done:{},names:['Husband','Wife'],abaya:'#7b5ea7',swap:false,sound:true};
+try{var _s=JSON.parse(localStorage.getItem(SKEY)||'null');if(_s)for(var k in _s)SV[k]=_s[k];}catch(e){}
+function save(){try{localStorage.setItem(SKEY,JSON.stringify(SV));}catch(e){}}
+
+/* ================= constants ================= */
+var STEP=0.17,SLIDE=0.085,GOAT=0.42,SYNC_WIN=0.8;
+var DIRS={U:[0,-1],D:[0,1],L:[-1,0],R:[1,0]};
+var GATE_COL={a:'#d9534f',b:'#3b82c4',c:'#2e9d5b',d:'#8e5bb5'};
+var SYM={5:'🌙',6:'⭐',7:'☀️',8:'❤️',9:'💧'};
+var SYMNAME={5:'moon',6:'star',7:'sun',8:'heart',9:'drop'};
+var THEMES={
+ home:{bg:'#f6ead8',f1:'#e8cfa8',f2:'#e2c79c',wall:'#8f5b3e',wallTop:'#a96f4d',tree:'pot',accent:'#c0703f',water:'#5aa9d6',star:'star'},
+ garden:{bg:'#dff0cf',f1:'#a9d68b',f2:'#a1cf82',wall:'#3e7b3a',wallTop:'#4f9447',tree:'round',accent:'#e86f8f',water:'#4fa3d9',star:'star'},
+ souq:{bg:'#f4e2c4',f1:'#e7c99b',f2:'#dfc091',wall:'#a8553a',wallTop:'#c06a47',tree:'round',accent:'#d99a2b',water:'#4f9fd0',star:'star'},
+ desert:{bg:'#fbecc8',f1:'#f1d9a2',f2:'#ecd297',wall:'#b98b55',wallTop:'#cf9f66',tree:'palm',accent:'#e0913a',water:'#46a6c9',star:'star'},
+ night:{bg:'#0e1726',f1:'#2f4a3c',f2:'#2b4537',wall:'#18242c',wallTop:'#22323c',tree:'palm',accent:'#ffd86b',water:'#2d5f8a',star:'firefly'},
+ masjid:{bg:'#fdf6ec',f1:'#f3eee4',f2:'#e9e2d4',wall:'#d6c7ad',wallTop:'#e8dcc6',tree:'cypress',accent:'#1f8a7a',water:'#59b6d9',star:'drop'}
+};
+
+/* ================= state ================= */
+var G=null;
+function chapterOf(i){return Math.floor(i/5);}
+function cfg(){return (LEVELS[G.lvl].cfg)||{};}
+
+function load(i){
+  var L=LEVELS[i];
+  G={lvl:i,H:L.map.length,W:L.map[0].length,map:[],boxes:[],goats:[],plates:{},gatesPresent:{},gates:{},levers:{},leverAt:{},latch:{},timers:{},
+     codeProg:0,syncT:{1:-99,2:-99},t:0,done:false,left:0,P:[],msg:'',msgT:0,lookout:false,shake:0,celebrate:0,fx:[]};
+  var li=0;
+  for(var y=0;y<G.H;y++){
+    var row=[];
+    for(var x=0;x<G.W;x++){
+      var c=L.map[y].charAt(x)||'#';
+      if(c==='1'||c==='2'){G.P[+c-1]=mkPlayer(+c,x,y);c='.';}
+      else if(c==='o'||c==='O'){G.boxes.push({x:x,y:y,sx:x,sy:y,heavy:c==='O',fx:x,fy:y,mt:1});c='.';}
+      else if(c==='g'){G.goats.push({x:x,y:y,sx:x,sy:y,dx:1,fx:x,fy:y,mt:1,t:0});c='.';}
+      else if(c>='a'&&c<='d'){(G.plates[c]=G.plates[c]||[]).push([x,y]);}
+      else if(c>='A'&&c<='D'){G.gatesPresent[c.toLowerCase()]=1;}
+      else if(c==='L'){var lv=(cfg().levers||[])[li++]||'a';G.leverAt[x+','+y]=lv;}
+      if(c==='x'||c==='y'||c==='*')G.left++;
+      row.push(c);
+    }
+    G.map.push(row);
+  }
+  G.orig=L.map.slice();
+  computeGates();
+  G.msg=L.hint;G.msgT=6;
+  buildStatic();
+  hud();
+}
+function mkPlayer(id,x,y){return {id:id,x:x,y:y,fx:x,fy:y,mt:1,moving:false,face:id===1?'R':'R',hold:null,sx:x,sy:y,slide:null,steps:0,spd:STEP,bump:0};}
+
+/* soft reset: back to the start of this task */
+function resetRoom(why){
+  var keep=G.lvl;load(keep);if(why){G.msg=why;G.msgT=3;G.shake=0.3;}
+}
+
+/* ================= map queries ================= */
+function T(x,y){return (y<0||y>=G.H||x<0||x>=G.W)?'#':G.map[y][x];}
+function isGate(c){return c>='A'&&c<='D';}
+function boxAt(x,y){for(var i=0;i<G.boxes.length;i++){var b=G.boxes[i];if(b.x===x&&b.y===y)return b;}return null;}
+function goatAt(x,y){for(var i=0;i<G.goats.length;i++){var g=G.goats[i];if(g.x===x&&g.y===y)return g;}return null;}
+function playerAt(x,y,ex){for(var i=0;i<2;i++){var p=G.P[i];if(p!==ex&&p.x===x&&p.y===y)return p;}return null;}
+function solidFor(c,who){
+  if(c==='#'||c==='T'||c==='~')return true;
+  if(isGate(c)&&!G.gates[c.toLowerCase()])return true;
+  if(c==='h'&&who!==1)return true;
+  if(c==='w'&&who!==2)return true;
+  return false;
+}
+function other(p){return G.P[p.id===1?1:0];}
+function cheb(ax,ay,bx,by){return Math.max(Math.abs(ax-bx),Math.abs(ay-by));}
+
+/* plan a single step for player p in direction d. Pure: no changes.
+   ox,oy = where the partner is (defaults to real position). */
+function plan(p,d,ox,oy){
+  var q=other(p);if(ox===undefined){ox=q.x;oy=q.y;}
+  var v=DIRS[d],nx=p.x+v[0],ny=p.y+v[1],c=T(nx,ny);
+  if(solidFor(c,p.id))return {ok:false,why:c==='h'?'blue':c==='w'?'pink':isGate(c)?'gate':''};
+  if(nx===ox&&ny===oy)return {ok:false,why:'partner'};
+  if(goatAt(nx,ny))return {ok:false,why:'goat'};
+  var teth=cfg().tether;
+  var b=boxAt(nx,ny);
+  if(b){
+    var bx=nx+v[0],by=ny+v[1],bc=T(bx,by);
+    var free=!(bc==='#'||bc==='T'||bc==='h'||bc==='w'||(isGate(bc)&&!G.gates[bc.toLowerCase()]))&&!boxAt(bx,by)&&!goatAt(bx,by)&&!(bx===ox&&by===oy)&&bc!=='E';
+    if(!free)return {ok:false,why:'stuck'};
+    if(b.heavy){
+      var behind=(ox===p.x-v[0]&&oy===p.y-v[1]);
+      if(!behind||q.hold!==d||q.moving)return {ok:false,why:'heavy'};
+      return {ok:true,x:nx,y:ny,box:b,bx:bx,by:by,heavy:true};
+    }
+    if(teth&&cheb(nx,ny,ox,oy)>teth)return {ok:false,why:'tether'};
+    return {ok:true,x:nx,y:ny,box:b,bx:bx,by:by};
+  }
+  if(teth&&cheb(nx,ny,ox,oy)>teth)return {ok:false,why:'tether'};
+  return {ok:true,x:nx,y:ny};
+}
+
+/* where would a walk in direction d end (including sand slides), for the path finder */
+function peek(p,d,px,py,ox,oy){
+  var sx=p.x,sy=p.y;p.x=px;p.y=py;
+  var r=plan(p,d,ox,oy),res=null;
+  if(r.ok&&!r.box){
+    var x=r.x,y=r.y,guard=0;
+    while(T(x,y)==='='&&guard++<40){
+      p.x=x;p.y=y;var r2=plan(p,d,ox,oy);
+      if(!r2.ok||r2.box)break;x=r2.x;y=r2.y;
+    }
+    res=[x,y];
+  }
+  p.x=sx;p.y=sy;return res;
+}
+
+/* ================= actions ================= */
+function startMove(p,x,y,spd){p.fx=p.x;p.fy=p.y;p.x=x;p.y=y;p.mt=0;p.moving=true;p.spd=spd||STEP;}
+function attempt(p,d){
+  p.face=d;
+  var r=plan(p,d);
+  if(!r.ok){
+    if(p.bump<=0){
+      if(r.why==='heavy')say('Too heavy! Stand one behind the other and push the same way together.');
+      else if(r.why==='blue')say('Only the husband can pass the blue light.');
+      else if(r.why==='pink')say('Only the wife can pass the pink light.');
+      else if(r.why==='tether')say('You are holding hands. Stay close to each other!');
+      else if(r.why==='gate')say('This door is closed. Look for its plate, lever or code.');
+      p.bump=0.6;
+    }
+    return false;
+  }
+  if(r.box){
+    var b=r.box;b.fx=b.x;b.fy=b.y;b.x=r.bx;b.y=r.by;b.mt=0;sfx('push');
+    if(r.heavy){var q=other(p);startMove(q,p.x,p.y);q.steps++;}
+  }
+  startMove(p,r.x,r.y,p.slide?SLIDE:STEP);p.steps++;
+  return true;
+}
+function arrive(p){
+  p.moving=false;var c=T(p.x,p.y);
+  if(c==='x'&&p.id===1||c==='y'&&p.id===2||c==='*'){G.map[p.y][p.x]='.';G.left--;sfx('pick');pop(p.x,p.y,c==='x'?'#8a5a2b':c==='y'?'#e75b8a':'#ffd34d');
+    if(G.left===0)say('Everything collected, MashaAllah! Now meet at the doorways.');}
+  if(c==='?'){sfx('fall');resetRoom('Crack! The ground gave way. Watch the lookout path and try again together.');return;}
+  if(c>='5'&&c<='9'&&cfg().code)stepCode(+c);
+  if(c==='='&&p.slide){if(!attempt(p,p.slide))p.slide=null;return;}
+  if(c==='='){p.slide=p.face;if(!attempt(p,p.slide))p.slide=null;return;}
+  p.slide=null;
+}
+function stepCode(s){
+  var C=cfg(),code=C.code;if(G.latch[C.codeGate])return;
+  if(!G.lookout){say('Someone must keep watch on the lookout 👀 to see the code.');return;}
+  if(code[G.codeProg]===s){G.codeProg++;sfx('ok');
+    if(G.codeProg===code.length){G.latch[C.codeGate]=true;sfx('open');say('The code is right, MashaAllah! A door has opened.');}
+  }else{G.codeProg=0;sfx('bad');say('Not that one. The code starts again from the first symbol.');}
+}
+function action(p){
+  if(G.done)return;
+  var c=T(p.x,p.y),k=p.x+','+p.y;
+  if(c==='L'&&!p.moving){var l=G.leverAt[k];G.levers[l]=!G.levers[l];sfx('lever');say(G.levers[l]?'Lever pulled. A door opened somewhere!':'Lever back. The door closed.');computeGates();return;}
+  if(c==='S'&&!p.moving){
+    G.syncT[p.id]=G.t;var q=other(p);
+    if(T(q.x,q.y)==='S'&&G.t-G.syncT[q.id]<SYNC_WIN){var s=cfg().sync;if(!G.latch[s]){G.latch[s]=true;sfx('open');say('Together! The door opens. Alhamdulillah.');pop(p.x,p.y,'#3cb371');pop(q.x,q.y,'#3cb371');}}
+    else {sfx('tap');say(T(q.x,q.y)==='S'?'Press at the same moment! Count “1, 2, 3” together.':'Your partner needs to stand on the other green button.');}
+  }
+}
+function knockBack(p){
+  var sx=p.sx,sy=p.sy,q=other(p);
+  if(q.x===sx&&q.y===sy){sx=p.x;sy=p.y;}
+  p.x=p.fx=sx;p.y=p.fy=sy;p.mt=1;p.moving=false;p.slide=null;sfx('bad');G.shake=0.25;
+  say('Baaa! A goat bumped '+SV.names[p.id-1]+' back to the start.');
+}
+
+/* ================= gates ================= */
+function pressed(x,y){var b=boxAt(x,y);if(b)return true;for(var i=0;i<2;i++){var p=G.P[i];if(p&&p.x===x&&p.y===y)return true;}return false;}
+function computeGates(){
+  var C=cfg(),tm=C.timed||{},all=C.all||[];
+  for(var l in G.gatesPresent){
+    var pl=G.plates[l],ok=false;
+    if(pl&&pl.length){var n=0;for(var i=0;i<pl.length;i++)if(pressed(pl[i][0],pl[i][1]))n++;ok=all.indexOf(l)>=0?n===pl.length:n>0;}
+    if(ok&&tm[l])G.timers[l]=G.t+tm[l];
+    var open=ok||(tm[l]&&G.t<G.timers[l])||!!G.latch[l]||!!G.levers[l];
+    if(!open&&G.gates[l]){ // never close on someone
+      for(var y=0;y<G.H;y++)for(var x=0;x<G.W;x++)if(G.map[y][x]===l.toUpperCase()&&(playerAt(x,y)||boxAt(x,y)))open=true;
+    }
+    if(open!==!!G.gates[l]&&G.t>0.05)sfx(open?'open':'close');
+    G.gates[l]=open;
+  }
+}
+
+/* ================= update ================= */
+function update(dt){
+  if(!G)return;
+  var g0=G;G.t+=dt;if(G.msgT>0)G.msgT-=dt;if(G.shake>0)G.shake-=dt;
+  var V=false;for(var i=0;i<2;i++){var pp=G.P[i];if(T(pp.x,pp.y)==='V')V=true;}G.lookout=V;
+  for(i=0;i<2;i++){
+    var p=G.P[i];if(p.bump>0)p.bump-=dt;
+    if(p.moving){p.mt+=dt/p.spd;if(p.mt>=1){p.mt=1;arrive(p);if(G!==g0)return;}}
+    if(!p.moving&&p.hold&&!G.done&&!G.overlay)attempt(p,p.hold);
+  }
+  for(i=0;i<G.boxes.length;i++){var b=G.boxes[i];if(b.mt<1){b.mt+=dt/STEP;if(b.mt>=1){b.mt=1;var bc=T(b.x,b.y);
+    if(bc==='~'){G.map[b.y][b.x]='_';G.boxes.splice(i,1);i--;sfx('splash');pop(b.x,b.y,'#7fc8ef');}
+    else if(bc==='?'){G.map[b.y][b.x]='_';G.boxes.splice(i,1);i--;}}}}
+  for(i=0;i<G.goats.length;i++){var g=G.goats[i];if(g.mt<1)g.mt=Math.min(1,g.mt+dt/(GOAT*0.6));g.t+=dt;
+    if(g.t>=GOAT){g.t=0;var nx=g.x+g.dx,c=T(nx,g.y);
+      if(c==='#'||c==='T'||c==='~'||c==='h'||c==='w'||(isGate(c)&&!G.gates[c.toLowerCase()])||boxAt(nx,g.y)||goatAt(nx,g.y)||c==='E'){g.dx=-g.dx;}
+      else{var hit=playerAt(nx,g.y);if(hit)knockBack(hit);g.fx=g.x;g.fy=g.y;g.x=nx;g.mt=0;}}}
+  computeGates();
+  checkWin();
+  for(i=G.fx.length-1;i>=0;i--){G.fx[i].t+=dt;if(G.fx[i].t>0.8)G.fx.splice(i,1);}
+}
+function checkWin(){
+  if(G.done)return;
+  var a=G.P[0],b=G.P[1];
+  if(!a.moving&&!b.moving&&T(a.x,a.y)==='E'&&T(b.x,b.y)==='E'){
+    if(G.left>0){if(G.msgT<=0)say('Collect everything first: '+G.left+' left.');return;}
+    G.done=true;sfx('win');complete();
+  }
+}
+
+/* ================= feedback ================= */
+function say(m){G.msg=m;G.msgT=3.2;}
+function pop(x,y,col){G.fx.push({x:x,y:y,col:col,t:0});}
+var AC=null;
+function sfx(k){
+  if(!SV.sound)return;
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();}catch(e){return;}
+  if(!AC)return;var t=AC.currentTime;
+  var N={push:[[180,.05,'triangle']],pick:[[880,.07],[1320,.09]],ok:[[660,.08],[990,.1]],bad:[[220,.12,'sawtooth']],fall:[[300,.1],[180,.18]],
+    open:[[523,.08],[659,.08],[784,.12]],close:[[300,.08,'triangle']],lever:[[400,.06,'square']],tap:[[600,.05]],splash:[[500,.05,'triangle'],[260,.08,'triangle']],
+    win:[[523,.1],[659,.1],[784,.1],[1046,.22]]}[k]||[[440,.05]];
+  var off=0;N.forEach(function(n){var o=AC.createOscillator(),g=AC.createGain();o.type=n[2]||'sine';o.frequency.value=n[0];
+    g.gain.setValueAtTime(0.0001,t+off);g.gain.exponentialRampToValueAtTime(0.12,t+off+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+off+n[1]);
+    o.connect(g);g.connect(AC.destination);o.start(t+off);o.stop(t+off+n[1]+0.02);off+=n[1]*0.8;});
+}
+
+/* ================= drawing ================= */
+var cv=document.getElementById('cv'),ctx=cv.getContext('2d'),DPR=1,TS=32,OX=0,OY=0,VW=0,VH=0,stat=null;
+function resize(){
+  DPR=Math.min(window.devicePixelRatio||1,1.5);VW=innerWidth;VH=innerHeight;
+  cv.width=Math.round(VW*DPR);cv.height=Math.round(VH*DPR);cv.style.width=VW+'px';cv.style.height=VH+'px';
+  if(G)buildStatic();
+}
+function layout(){
+  var top=document.getElementById('hud').offsetHeight+6,bot=46;
+  var availH=VH-top-bot,availW=VW-12-(isTouch?150:0); /* keep the ✋ buttons off the board on phones */
+  TS=Math.max(10,Math.floor(Math.min(availW/G.W,availH/G.H)));
+  OX=Math.floor((VW-TS*G.W)/2);OY=top+Math.floor((availH-TS*G.H)/2);
+}
+function th(){return THEMES[CHAPTERS[chapterOf(G.lvl)].theme];}
+function buildStatic(){
+  if(!G)return;layout();
+  stat=document.createElement('canvas');stat.width=Math.round(G.W*TS*DPR);stat.height=Math.round(G.H*TS*DPR);
+  var c=stat.getContext('2d');c.scale(DPR,DPR);var P=th();
+  for(var y=0;y<G.H;y++)for(var x=0;x<G.W;x++){
+    var t=G.orig[y].charAt(x),X=x*TS,Y=y*TS;
+    c.fillStyle=(x+y)%2?P.f1:P.f2;c.fillRect(X,Y,TS+1,TS+1);
+    if(P.theme==='home'||CHAPTERS[chapterOf(G.lvl)].theme==='home'){c.strokeStyle='rgba(120,80,40,.12)';c.beginPath();c.moveTo(X,Y+TS/2);c.lineTo(X+TS,Y+TS/2);c.stroke();}
+    if(t==='#')drawWall(c,X,Y,x,y,P);
+    else if(t==='~')drawWater(c,X,Y,P);
+    else if(t==='T'){drawTree(c,X,Y,P);}
+    else if(t==='='){c.fillStyle='rgba(230,170,70,.55)';c.fillRect(X,Y,TS,TS);c.strokeStyle='rgba(160,105,40,.45)';c.lineWidth=Math.max(1,TS/18);
+      for(var k=1;k<4;k++){c.beginPath();c.moveTo(X+TS*0.1,Y+TS*k/4);c.quadraticCurveTo(X+TS/2,Y+TS*k/4-TS*0.09,X+TS*0.9,Y+TS*k/4);c.stroke();}}
+    else if(t==='?'||t==='+'){c.fillStyle='rgba(120,90,60,.35)';c.fillRect(X+1,Y+1,TS-2,TS-2);c.strokeStyle='rgba(70,45,25,.6)';c.lineWidth=Math.max(1,TS/20);
+      c.beginPath();c.moveTo(X+TS*0.2,Y+TS*0.3);c.lineTo(X+TS*0.45,Y+TS*0.5);c.lineTo(X+TS*0.4,Y+TS*0.8);c.moveTo(X+TS*0.45,Y+TS*0.5);c.lineTo(X+TS*0.8,Y+TS*0.4);c.stroke();}
+    else if(t==='f'){flower(c,X+TS*0.3,Y+TS*0.35,TS*0.12,'#ff7aa8');flower(c,X+TS*0.7,Y+TS*0.65,TS*0.12,'#ffd166');}
+    else if(t==='.'&&((x*7+y*13)%11===0)){deco(c,X,Y,P);}
+  }
+}
+function drawWall(c,X,Y,x,y,P){
+  var theme=CHAPTERS[chapterOf(G.lvl)].theme;
+  c.fillStyle=P.wall;c.fillRect(X,Y,TS+1,TS+1);
+  c.fillStyle=P.wallTop;c.fillRect(X,Y,TS+1,TS*0.72);
+  if(theme==='home'||theme==='souq'){c.strokeStyle='rgba(0,0,0,.16)';c.lineWidth=1;for(var r=0;r<3;r++){var yy=Y+r*TS/3;c.beginPath();c.moveTo(X,yy);c.lineTo(X+TS,yy);c.stroke();var off=(r%2)*TS/2;c.beginPath();c.moveTo(X+off+TS/4,yy);c.lineTo(X+off+TS/4,yy+TS/3);c.stroke();}}
+  if(theme==='garden'){c.fillStyle='rgba(255,255,255,.08)';for(var i=0;i<4;i++){c.beginPath();c.arc(X+((x*3+i*7)%10)/10*TS,Y+((y*5+i*3)%10)/10*TS*0.7,TS*0.12,0,7);c.fill();}}
+  if(theme==='masjid'&&(x+y)%3===0){c.fillStyle='rgba(31,138,122,.22)';c.beginPath();c.moveTo(X+TS*0.25,Y+TS*0.72);c.lineTo(X+TS*0.25,Y+TS*0.4);c.quadraticCurveTo(X+TS/2,Y+TS*0.08,X+TS*0.75,Y+TS*0.4);c.lineTo(X+TS*0.75,Y+TS*0.72);c.fill();}
+  if(theme==='night'&&(x*5+y)%7===0){c.fillStyle='rgba(255,230,150,.35)';c.beginPath();c.arc(X+TS/2,Y+TS*0.3,TS*0.05,0,7);c.fill();}
+}
+function drawWater(c,X,Y,P){c.fillStyle=P.water;c.fillRect(X,Y,TS+1,TS+1);c.strokeStyle='rgba(255,255,255,.35)';c.lineWidth=Math.max(1,TS/16);
+  for(var k=0;k<2;k++){var yy=Y+TS*(0.35+k*0.35);c.beginPath();c.moveTo(X+TS*0.15,yy);c.quadraticCurveTo(X+TS*0.35,yy-TS*0.1,X+TS*0.5,yy);c.quadraticCurveTo(X+TS*0.65,yy+TS*0.1,X+TS*0.85,yy);c.stroke();}}
+function drawTree(c,X,Y,P){
+  var cx=X+TS/2,cy=Y+TS/2;
+  c.fillStyle='rgba(0,0,0,.15)';c.beginPath();c.ellipse(cx,Y+TS*0.85,TS*0.32,TS*0.1,0,0,7);c.fill();
+  if(P.tree==='palm'){c.fillStyle='#8a5a2b';c.fillRect(cx-TS*0.05,cy-TS*0.1,TS*0.1,TS*0.5);c.fillStyle='#3f9a4a';for(var a=0;a<6;a++){c.beginPath();c.ellipse(cx+Math.cos(a)*TS*0.2,cy-TS*0.15+Math.sin(a)*TS*0.12,TS*0.22,TS*0.07,a,0,7);c.fill();}}
+  else if(P.tree==='pot'){c.fillStyle='#b5673d';c.fillRect(cx-TS*0.18,cy+TS*0.05,TS*0.36,TS*0.3);c.fillStyle='#4c9a4f';c.beginPath();c.arc(cx,cy-TS*0.08,TS*0.25,0,7);c.fill();}
+  else if(P.tree==='cypress'){c.fillStyle='#2f7d5b';c.beginPath();c.ellipse(cx,cy,TS*0.2,TS*0.42,0,0,7);c.fill();}
+  else {c.fillStyle='#7a4f2a';c.fillRect(cx-TS*0.06,cy,TS*0.12,TS*0.35);c.fillStyle='#4fa047';c.beginPath();c.arc(cx,cy-TS*0.05,TS*0.33,0,7);c.fill();c.fillStyle='rgba(255,255,255,.15)';c.beginPath();c.arc(cx-TS*0.1,cy-TS*0.15,TS*0.12,0,7);c.fill();}
+}
+function flower(c,x,y,r,col){c.fillStyle=col;for(var a=0;a<5;a++){c.beginPath();c.arc(x+Math.cos(a*1.26)*r,y+Math.sin(a*1.26)*r,r*0.7,0,7);c.fill();}c.fillStyle='#fff3b0';c.beginPath();c.arc(x,y,r*0.6,0,7);c.fill();}
+function deco(c,X,Y,P){var theme=CHAPTERS[chapterOf(G.lvl)].theme;
+  if(theme==='garden')flower(c,X+TS/2,Y+TS/2,TS*0.1,'#ff9ec4');
+  else if(theme==='home'){c.fillStyle='rgba(180,60,60,.18)';c.fillRect(X+TS*0.15,Y+TS*0.2,TS*0.7,TS*0.6);}
+  else if(theme==='desert'){c.fillStyle='rgba(150,110,60,.35)';c.beginPath();c.arc(X+TS*0.4,Y+TS*0.6,TS*0.07,0,7);c.arc(X+TS*0.6,Y+TS*0.4,TS*0.05,0,7);c.fill();}
+  else if(theme==='masjid'){c.strokeStyle='rgba(31,138,122,.25)';c.lineWidth=1;c.beginPath();c.moveTo(X+TS/2,Y+TS*0.2);c.lineTo(X+TS*0.8,Y+TS/2);c.lineTo(X+TS/2,Y+TS*0.8);c.lineTo(X+TS*0.2,Y+TS/2);c.closePath();c.stroke();}
+}
+
+function lerp(a,b,t){return a+(b-a)*t;}
+function ease(t){return t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
+function draw(){
+  if(!G)return;
+  var P=th(),c=ctx;c.setTransform(DPR,0,0,DPR,0,0);
+  c.fillStyle=P.bg;c.fillRect(0,0,VW,VH);
+  if(CHAPTERS[chapterOf(G.lvl)].theme==='masjid'){var gr=c.createLinearGradient(0,0,0,VH);gr.addColorStop(0,'#ffd9b3');gr.addColorStop(1,'#fdf6ec');c.fillStyle=gr;c.fillRect(0,0,VW,VH);}
+  if(CHAPTERS[chapterOf(G.lvl)].theme==='night'){c.fillStyle='rgba(255,255,255,.5)';for(var s=0;s<40;s++){c.fillRect((s*97)%VW,(s*53)%VH,1.5,1.5);}}
+  var sh=G.shake>0?(Math.random()-0.5)*6:0;
+  c.save();c.translate(OX+sh,OY);
+  c.drawImage(stat,0,0,G.W*TS,G.H*TS);
+  var tt=G.t;
+  for(var y=0;y<G.H;y++)for(var x=0;x<G.W;x++){
+    var ch=G.map[y][x],X=x*TS,Y=y*TS,cx=X+TS/2,cy=Y+TS/2;
+    if(ch==='_'){c.fillStyle='#a5774a';c.fillRect(X+1,Y+1,TS-2,TS-2);c.strokeStyle='#7c5432';c.lineWidth=1;for(var k=1;k<3;k++){c.beginPath();c.moveTo(X,Y+TS*k/3);c.lineTo(X+TS,Y+TS*k/3);c.stroke();}}
+    else if(ch>='a'&&ch<='d'){var pr=pressed(x,y);c.fillStyle=GATE_COL[ch];c.globalAlpha=pr?1:0.75;c.beginPath();c.arc(cx,cy+(pr?TS*0.04:0),TS*0.36,0,7);c.fill();
+      c.globalAlpha=1;c.fillStyle=pr?'rgba(0,0,0,.25)':'rgba(255,255,255,.35)';c.beginPath();c.arc(cx,cy,TS*0.24,0,7);c.fill();
+      if(!pr)label(c,ch.toUpperCase(),cx,cy,'#fff');}
+    else if(isGate(ch)){var l=ch.toLowerCase(),op=G.gates[l];
+      if(op){c.strokeStyle=GATE_COL[l];c.globalAlpha=0.45;c.lineWidth=2;c.strokeRect(X+3,Y+3,TS-6,TS-6);c.globalAlpha=1;}
+      else{c.fillStyle=GATE_COL[l];c.fillRect(X+1,Y+1,TS-2,TS-2);c.fillStyle='rgba(0,0,0,.22)';for(var bb=1;bb<4;bb++)c.fillRect(X+TS*bb/4-TS*0.04,Y+2,TS*0.08,TS-4);
+        var tm=(cfg().timed||{})[l];label(c,ch,cx,cy,'#fff');}
+      if(op&&(cfg().timed||{})[l]&&G.timers[l]>G.t){var rem=(G.timers[l]-G.t)/(cfg().timed[l]);c.fillStyle=GATE_COL[l];c.fillRect(X+2,Y+TS-5,(TS-4)*Math.max(0,rem),3);}}
+    else if(ch==='h'||ch==='w'){var col=ch==='h'?'60,140,230':'235,90,160';var a=0.35+0.15*Math.sin(tt*4+x);
+      c.fillStyle='rgba('+col+','+a+')';c.fillRect(X,Y,TS,TS);c.strokeStyle='rgba('+col+',.9)';c.lineWidth=2;
+      for(var kk=0;kk<3;kk++){c.beginPath();c.moveTo(X+TS*(0.2+kk*0.3),Y+2);c.lineTo(X+TS*(0.2+kk*0.3),Y+TS-2);c.stroke();}
+      miniPerson(c,cx,cy,TS*0.22,ch==='h'?1:2);}
+    else if(ch==='x'){c.fillStyle='#7a4a22';c.beginPath();c.ellipse(cx,cy,TS*0.14,TS*0.22,0.4,0,7);c.fill();c.fillStyle='rgba(255,255,255,.3)';c.beginPath();c.ellipse(cx-TS*0.04,cy-TS*0.06,TS*0.04,TS*0.08,0.4,0,7);c.fill();}
+    else if(ch==='y'){flower(c,cx,cy-TS*0.05,TS*0.13,'#e2457a');c.strokeStyle='#3d8b3d';c.lineWidth=2;c.beginPath();c.moveTo(cx,cy+TS*0.05);c.lineTo(cx,cy+TS*0.35);c.stroke();}
+    else if(ch==='*'){var bob=Math.sin(tt*3+x+y)*TS*0.05;
+      if(P.star==='drop'){c.fillStyle='#3aa8e0';c.beginPath();c.moveTo(cx,cy-TS*0.25+bob);c.quadraticCurveTo(cx+TS*0.22,cy+TS*0.05+bob,cx,cy+TS*0.2+bob);c.quadraticCurveTo(cx-TS*0.22,cy+TS*0.05+bob,cx,cy-TS*0.25+bob);c.fill();}
+      else{c.fillStyle=P.star==='firefly'?'#fff38a':'#ffc93c';c.shadowColor='#ffe680';c.shadowBlur=P.star==='firefly'?14:6;star(c,cx,cy+bob,TS*0.24);c.shadowBlur=0;}}
+    else if(ch==='L'){var on=G.levers[G.leverAt[x+','+y]];c.fillStyle='#6b6b6b';c.fillRect(cx-TS*0.25,cy+TS*0.12,TS*0.5,TS*0.14);
+      c.strokeStyle='#444';c.lineWidth=Math.max(2,TS*0.08);c.beginPath();c.moveTo(cx,cy+TS*0.15);c.lineTo(cx+(on?1:-1)*TS*0.22,cy-TS*0.22);c.stroke();
+      c.fillStyle=on?GATE_COL[G.leverAt[x+','+y]]:'#c94040';c.beginPath();c.arc(cx+(on?1:-1)*TS*0.22,cy-TS*0.22,TS*0.1,0,7);c.fill();}
+    else if(ch==='S'){var lit=G.latch[cfg().sync]||(G.t-Math.max(G.syncT[1],G.syncT[2])<0.3);c.fillStyle='#2e7d4f';c.beginPath();c.arc(cx,cy,TS*0.38,0,7);c.fill();
+      c.fillStyle=lit?'#9ff0b8':'#4cc27b';c.beginPath();c.arc(cx,cy-TS*0.04,TS*0.28,0,7);c.fill();label(c,'✋',cx,cy-TS*0.03,'#fff',0.32);}
+    else if(ch==='V'){c.fillStyle='#8a5a2b';c.fillRect(cx-TS*0.3,cy-TS*0.05,TS*0.6,TS*0.35);c.fillStyle=G.lookout?'#ffd34d':'#c99a5b';c.fillRect(cx-TS*0.36,cy-TS*0.3,TS*0.72,TS*0.25);label(c,'👁',cx,cy-TS*0.17,'#000',0.26);}
+    else if(ch>='5'&&ch<='9'){var done=cfg().code&&G.latch[cfg().codeGate];c.fillStyle=done?'rgba(60,180,110,.4)':'rgba(255,255,255,.55)';c.beginPath();c.arc(cx,cy,TS*0.4,0,7);c.fill();
+      c.strokeStyle='rgba(0,0,0,.2)';c.lineWidth=1;c.stroke();label(c,SYM[ch],cx,cy+TS*0.02,'#000',0.46);}
+    else if(ch==='E'){var gl=0.5+0.3*Math.sin(tt*3);c.fillStyle='rgba(255,214,90,'+gl*0.55+')';c.beginPath();c.arc(cx,cy,TS*0.45,0,7);c.fill();
+      c.fillStyle='#e0a23a';c.beginPath();c.moveTo(cx-TS*0.28,cy+TS*0.38);c.lineTo(cx-TS*0.28,cy-TS*0.05);c.quadraticCurveTo(cx,cy-TS*0.5,cx+TS*0.28,cy-TS*0.05);c.lineTo(cx+TS*0.28,cy+TS*0.38);c.fill();
+      c.fillStyle='rgba(255,250,220,.9)';c.beginPath();c.moveTo(cx-TS*0.18,cy+TS*0.38);c.lineTo(cx-TS*0.18,cy);c.quadraticCurveTo(cx,cy-TS*0.32,cx+TS*0.18,cy);c.lineTo(cx+TS*0.18,cy+TS*0.38);c.fill();}
+    else if(ch==='+'&&G.lookout){c.fillStyle='rgba(255,215,80,'+(0.45+0.2*Math.sin(tt*5))+')';c.fillRect(X+2,Y+2,TS-4,TS-4);}
+  }
+  // tether rope
+  var A=pos(G.P[0]),B=pos(G.P[1]);
+  if(cfg().tether){var tight=cheb(G.P[0].x,G.P[0].y,G.P[1].x,G.P[1].y)>=cfg().tether;c.strokeStyle=tight?'#e0603a':'#c9a36a';c.lineWidth=Math.max(2,TS*0.07);c.beginPath();c.moveTo(A[0],A[1]+TS*0.05);
+    c.quadraticCurveTo((A[0]+B[0])/2,(A[1]+B[1])/2+(tight?0:TS*0.5),B[0],B[1]+TS*0.05);c.stroke();}
+  // boxes
+  G.boxes.forEach(function(b){var e=ease(b.mt),X=lerp(b.fx,b.x,e)*TS,Y=lerp(b.fy,b.y,e)*TS,m=TS*0.08;
+    c.fillStyle='rgba(0,0,0,.18)';c.fillRect(X+m+2,Y+m+4,TS-2*m,TS-2*m);
+    c.fillStyle=b.heavy?'#6b3f1f':'#c48a4f';c.fillRect(X+m,Y+m,TS-2*m,TS-2*m);
+    c.strokeStyle=b.heavy?'#e0b44a':'#8a5a2b';c.lineWidth=Math.max(2,TS*0.07);c.strokeRect(X+m+1,Y+m+1,TS-2*m-2,TS-2*m-2);
+    c.beginPath();if(b.heavy){c.moveTo(X+m,Y+TS/2);c.lineTo(X+TS-m,Y+TS/2);c.moveTo(X+TS/2,Y+m);c.lineTo(X+TS/2,Y+TS-m);}else{c.moveTo(X+m,Y+m);c.lineTo(X+TS-m,Y+TS-m);}c.stroke();
+    if(b.heavy){c.fillStyle='#e0b44a';c.beginPath();c.arc(X+TS/2,Y+TS/2,TS*0.08,0,7);c.fill();}});
+  // goats
+  G.goats.forEach(function(g){var e=ease(g.mt),X=lerp(g.fx,g.x,e)*TS+TS/2,Y=lerp(g.fy,g.y,e)*TS+TS/2;c.save();c.translate(X,Y);if(g.dx<0)c.scale(-1,1);label(c,'🐐',0,0,'#000',0.8);c.restore();});
+  // players (draw lower one last)
+  var order=G.P.slice().sort(function(a,b){return a.y-b.y;});
+  order.forEach(function(p){var q=pos(p);person(c,q[0],q[1],p);});
+  // effects
+  G.fx.forEach(function(f){var r=TS*(0.2+f.t),a=1-f.t/0.8;c.strokeStyle=f.col;c.globalAlpha=a;c.lineWidth=3;c.beginPath();c.arc(f.x*TS+TS/2,f.y*TS+TS/2,r,0,7);c.stroke();c.globalAlpha=1;});
+  // darkness
+  var dk=cfg().dark;
+  if(dk){var D=getDark();var dc=D.getContext('2d');dc.setTransform(1,0,0,1,0,0);dc.globalCompositeOperation='source-over';dc.clearRect(0,0,D.width,D.height);
+    dc.fillStyle='rgba(4,8,18,.94)';dc.fillRect(0,0,D.width,D.height);dc.globalCompositeOperation='destination-out';
+    G.P.forEach(function(p){var q=pos(p),r=(p.id===(dk==='h'?1:2)?3.4:1.25)*TS*(1+0.03*Math.sin(tt*7));var g=dc.createRadialGradient(q[0],q[1],r*0.3,q[0],q[1],r);g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(1,'rgba(0,0,0,0)');dc.fillStyle=g;dc.beginPath();dc.arc(q[0],q[1],r,0,7);dc.fill();});
+    for(var yy=0;yy<G.H;yy++)for(var xx=0;xx<G.W;xx++){var cc=G.map[yy][xx];if(cc==='E'||cc==='*'){var g2=dc.createRadialGradient(xx*TS+TS/2,yy*TS+TS/2,1,xx*TS+TS/2,yy*TS+TS/2,TS*0.7);g2.addColorStop(0,'rgba(0,0,0,.9)');g2.addColorStop(1,'rgba(0,0,0,0)');dc.fillStyle=g2;dc.beginPath();dc.arc(xx*TS+TS/2,yy*TS+TS/2,TS*0.7,0,7);dc.fill();}}
+    c.drawImage(D,0,0);
+    var lp=G.P[dk==='h'?0:1],lq=pos(lp);c.fillStyle='rgba(255,210,110,.18)';c.beginPath();c.arc(lq[0],lq[1],TS*0.8,0,7);c.fill();label(c,'🏮',lq[0]+TS*0.32,lq[1]-TS*0.05,'#000',0.42);
+  }
+  c.restore();
+  // code panel
+  var cp=document.getElementById('codep');
+  if(cfg().code&&G.lookout&&!G.latch[cfg().codeGate]){cp.style.display='flex';cp.innerHTML='<span>Code:</span>'+cfg().code.map(function(s,i){return '<b class="'+(i<G.codeProg?'got':'')+'">'+SYM[s]+'</b>';}).join('');}
+  else cp.style.display='none';
+  var m=document.getElementById('msg');if(G.msgT>0&&G.msg){m.textContent=G.msg;m.style.opacity=Math.min(1,G.msgT*2);m.style.display='block';}else m.style.display='none';
+}
+var darkC=null;function getDark(){var w=G.W*TS,h=G.H*TS;if(!darkC||darkC.width!==w||darkC.height!==h){darkC=document.createElement('canvas');darkC.width=w;darkC.height=h;}return darkC;}
+function pos(p){var e=ease(Math.min(1,p.mt));return [lerp(p.fx,p.x,e)*TS+TS/2,lerp(p.fy,p.y,e)*TS+TS/2];}
+function label(c,t,x,y,col,s){c.fillStyle=col;c.font='bold '+Math.round(TS*(s||0.42))+'px system-ui,"Segoe UI Emoji","Noto Color Emoji",sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(t,x,y);}
+function star(c,x,y,r){c.beginPath();for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*0.45:r;c.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr);}c.closePath();c.fill();}
+function miniPerson(c,x,y,r,id){c.fillStyle='rgba(255,255,255,.9)';c.beginPath();c.arc(x,y-r*0.45,r*0.45,0,7);c.fill();c.fillStyle=id===1?'#fff':SV.abaya;c.beginPath();c.moveTo(x-r*0.6,y+r);c.lineTo(x,y-r*0.1);c.lineTo(x+r*0.6,y+r);c.fill();
+  if(id===2){c.fillStyle=SV.abaya;c.beginPath();c.arc(x,y-r*0.45,r*0.5,Math.PI,0);c.fill();}else{c.fillStyle='#eee';c.beginPath();c.arc(x,y-r*0.6,r*0.35,Math.PI,0);c.fill();}}
+function shade(hex,amt){var n=parseInt(hex.slice(1),16),r=(n>>16)+amt,g=((n>>8)&255)+amt,b=(n&255)+amt;r=Math.max(0,Math.min(255,r));g=Math.max(0,Math.min(255,g));b=Math.max(0,Math.min(255,b));return 'rgb('+r+','+g+','+b+')';}
+function person(c,x,y,p){
+  var r=TS*0.52,walk=p.moving?Math.sin(p.mt*Math.PI*2)*r*0.08:0,dx=p.face==='L'?-1:p.face==='R'?1:0,dy=p.face==='U'?-1:p.face==='D'?1:0;
+  c.fillStyle='rgba(0,0,0,.2)';c.beginPath();c.ellipse(x,y+r*0.85,r*0.6,r*0.18,0,0,7);c.fill();
+  var by=y-walk;
+  if(p.id===1){
+    c.fillStyle='#f7f6f0';c.beginPath();c.moveTo(x-r*0.55,by+r*0.85);c.quadraticCurveTo(x-r*0.6,by-r*0.05,x-r*0.3,by-r*0.15);c.lineTo(x+r*0.3,by-r*0.15);c.quadraticCurveTo(x+r*0.6,by-r*0.05,x+r*0.55,by+r*0.85);c.closePath();c.fill();
+    c.strokeStyle='#cfcac0';c.lineWidth=1;c.stroke();c.strokeStyle='#d9d4c8';c.beginPath();c.moveTo(x,by-r*0.1);c.lineTo(x,by+r*0.35);c.stroke();
+    c.fillStyle='#c98f63';c.beginPath();c.arc(x,by-r*0.45,r*0.36,0,7);c.fill();
+    c.fillStyle='#3a2a20';c.beginPath();c.arc(x,by-r*0.33,r*0.3,0.15*Math.PI,0.85*Math.PI);c.fill();
+    c.fillStyle='#fbfbf7';c.beginPath();c.arc(x,by-r*0.6,r*0.34,Math.PI,0);c.fill();c.fillRect(x-r*0.34,by-r*0.62,r*0.68,r*0.08);
+  }else{
+    var ab=SV.abaya;
+    c.fillStyle=ab;c.beginPath();c.moveTo(x-r*0.6,by+r*0.85);c.quadraticCurveTo(x-r*0.62,by-r*0.1,x-r*0.3,by-r*0.2);c.lineTo(x+r*0.3,by-r*0.2);c.quadraticCurveTo(x+r*0.62,by-r*0.1,x+r*0.6,by+r*0.85);c.closePath();c.fill();
+    c.fillStyle=shade(ab,25);c.beginPath();c.arc(x,by-r*0.45,r*0.44,0,7);c.fill();
+    c.fillStyle='#d6a27a';c.beginPath();c.ellipse(x+dx*r*0.05,by-r*0.42,r*0.24,r*0.28,0,0,7);c.fill();
+  }
+  if(p.face!=='U'){c.fillStyle='#2b1d14';var ex=dx*r*0.1;c.beginPath();c.arc(x-r*0.11+ex,by-r*0.47+dy*r*0.03,r*0.045,0,7);c.arc(x+r*0.11+ex,by-r*0.47+dy*r*0.03,r*0.045,0,7);c.fill();
+    if(G.done){c.strokeStyle='#2b1d14';c.lineWidth=1.5;c.beginPath();c.arc(x+ex,by-r*0.36,r*0.08,0.1*Math.PI,0.9*Math.PI);c.stroke();}}
+  c.font='bold '+Math.max(10,Math.round(TS*0.28))+'px system-ui,sans-serif';c.textAlign='center';c.textBaseline='bottom';
+  var nm=SV.names[p.id-1];c.lineWidth=3;c.strokeStyle='rgba(0,0,0,.45)';c.strokeText(nm,x,by-r*0.9);c.fillStyle=p.id===1?'#d8ecff':'#ffd8ea';c.fillText(nm,x,by-r*0.9);
+}
+
+/* ================= HUD / screens ================= */
+function $(id){return document.getElementById(id);}
+function hud(){
+  var ch=CHAPTERS[chapterOf(G.lvl)];
+  $('hudT').innerHTML='<b>'+ch.name+'</b> <span class="ar">'+ch.ar+'</span> · Task '+(G.lvl+1)+' of '+LEVELS.length;
+  $('hudN').textContent=LEVELS[G.lvl].t;
+}
+var overlay=null,ready={1:false,2:false};
+function show(id){['title','select','done','chapter','howto','pause'].forEach(function(s){$(s).style.display=s===id?'flex':'none';});overlay=id;if(G)G.overlay=!!id;}
+function complete(){
+  var i=G.lvl,s=SAYINGS[i%SAYINGS.length];
+  SV.done[i]=1;SV.unlocked=Math.max(SV.unlocked,i+1);save();
+  $('dSay').textContent=s.ar;$('dTr').textContent=s.tr+'!';$('dEn').textContent=s.en;
+  $('dTask').textContent='Task '+(i+1)+' complete: '+LEVELS[i].t;
+  $('dBond').textContent=BOND[i]||BOND[0];
+  ready={1:false,2:false};readyUI();
+  setTimeout(function(){show('done');},700);
+}
+function readyUI(){[1,2].forEach(function(k){var b=$('r'+k);b.classList.toggle('on',ready[k]);b.textContent=(ready[k]?'✓ ':'')+SV.names[k-1]+(ready[k]?' is ready':' — tap when ready');});}
+function setReady(k){if(overlay!=='done'&&overlay!=='chapter')return;ready[k]=true;sfx('tap');
+  if(overlay==='done')readyUI();else chReadyUI();
+  if(ready[1]&&ready[2])setTimeout(next,250);}
+function next(){
+  var i=G.lvl;
+  if(overlay==='done'&&(i+1)%5===0){var ch=CHAPTERS[chapterOf(i)];$('cName').textContent=(i+1===LEVELS.length?'Alhamdulillah! You finished every task together':'Chapter complete: '+ch.name);
+    $('cAr').textContent=ch.end.ar;$('cEn').textContent=ch.end.en;$('cRef').textContent=ch.end.ref;ready={1:false,2:false};chReadyUI();show('chapter');return;}
+  if(i+1>=LEVELS.length){show('select');renderSelect();return;}
+  show(null);load(i+1);
+}
+function chReadyUI(){[1,2].forEach(function(k){var b=$('c'+k);b.classList.toggle('on',ready[k]);b.textContent=(ready[k]?'✓ ':'')+SV.names[k-1];});}
+function renderSelect(){
+  var h='';CHAPTERS.forEach(function(ch,ci){h+='<div class="chap"><h3>'+ch.name+' <span class="ar">'+ch.ar+'</span></h3><div class="tasks">';
+    for(var j=0;j<5;j++){var i=ci*5+j,lock=i>SV.unlocked,d=SV.done[i];h+='<button class="tk'+(d?' done':'')+'" data-lv="'+i+'"'+(lock?' disabled':'')+'><b>'+(i+1)+'</b><span>'+(lock?'🔒':LEVELS[i].t)+'</span></button>';}
+    h+='</div></div>';});
+  $('selList').innerHTML=h;
+  var n=Object.keys(SV.done).length;$('selProg').textContent=n+' of '+LEVELS.length+' tasks done'+(n===LEVELS.length?' — MashaAllah!':'');
+}
+function startLevel(i){show(null);load(i);if(AC&&AC.resume)AC.resume();}
+
+/* ================= input ================= */
+var isTouch=('ontouchstart' in window)||navigator.maxTouchPoints>0;
+var KEYS={KeyW:[1,'U'],KeyA:[1,'L'],KeyS:[1,'D'],KeyD:[1,'R'],ArrowUp:[2,'U'],ArrowLeft:[2,'L'],ArrowDown:[2,'D'],ArrowRight:[2,'R']};
+var ACT={KeyE:1,Space:1,KeyF:1,Enter:2,Slash:2,NumpadEnter:2,Numpad0:2,ShiftRight:2};
+var held={1:[],2:[]};
+function setHold(id){var h=held[id];if(G)G.P[id-1].hold=h.length?h[h.length-1]:null;}
+addEventListener('keydown',function(e){
+  if(e.target&&e.target.tagName==='INPUT')return;
+  var k=KEYS[e.code];
+  if(k){e.preventDefault();if(held[k[0]].indexOf(k[1])<0){held[k[0]].push(k[1]);setHold(k[0]);}return;}
+  var a=ACT[e.code];
+  if(a){e.preventDefault();if(e.repeat)return;if(overlay==='done'||overlay==='chapter')setReady(a);else if(G&&!overlay)action(G.P[a-1]);return;}
+  if(e.code==='KeyR'&&G&&!overlay)resetRoom('Starting this task again.');
+  if(e.code==='Escape'&&G){if(overlay==='pause')show(null);else if(!overlay)show('pause');}
+});
+addEventListener('keyup',function(e){var k=KEYS[e.code];if(k){var h=held[k[0]],i=h.indexOf(k[1]);if(i>=0)h.splice(i,1);setHold(k[0]);}});
+addEventListener('blur',function(){held={1:[],2:[]};setHold(1);setHold(2);});
+
+/* touch: left half = one player, right half = the other */
+var sticks={};
+function sideId(x){var left=x<VW/2;return (left!==SV.swap)?1:2;}
+var tl=$('touch');
+function stickDir(s){var dx=s.x-s.ox,dy=s.y-s.oy,d=Math.hypot(dx,dy);if(d<16)return null;return Math.abs(dx)>Math.abs(dy)?(dx>0?'R':'L'):(dy>0?'D':'U');}
+function tStart(e){
+  if(overlay)return;
+  for(var i=0;i<e.changedTouches.length;i++){var t=e.changedTouches[i],id=sideId(t.clientX);
+    if(e.target.closest&&e.target.closest('.act'))continue;
+    sticks[t.identifier]={id:id,ox:t.clientX,oy:t.clientY,x:t.clientX,y:t.clientY};}
+  e.preventDefault();drawSticks();
+}
+function tMove(e){for(var i=0;i<e.changedTouches.length;i++){var t=e.changedTouches[i],s=sticks[t.identifier];if(!s)continue;s.x=t.clientX;s.y=t.clientY;
+  var d=stickDir(s);held[s.id]=d?[d]:[];setHold(s.id);}e.preventDefault();drawSticks();}
+function tEnd(e){for(var i=0;i<e.changedTouches.length;i++){var t=e.changedTouches[i],s=sticks[t.identifier];if(!s)continue;held[s.id]=[];setHold(s.id);delete sticks[t.identifier];}drawSticks();}
+tl.addEventListener('touchstart',tStart,{passive:false});tl.addEventListener('touchmove',tMove,{passive:false});tl.addEventListener('touchend',tEnd);tl.addEventListener('touchcancel',tEnd);
+function drawSticks(){var h='';for(var k in sticks){var s=sticks[k],dx=s.x-s.ox,dy=s.y-s.oy,d=Math.hypot(dx,dy),m=Math.min(d,46),ang=Math.atan2(dy,dx);
+  h+='<div class="stk p'+s.id+'" style="left:'+(s.ox-50)+'px;top:'+(s.oy-50)+'px"><i style="transform:translate('+(Math.cos(ang)*m)+'px,'+(Math.sin(ang)*m)+'px)"></i></div>';}
+  $('sticks').innerHTML=h;}
+['a1','a2'].forEach(function(b,i){var el=$(b);el.addEventListener('touchstart',function(e){e.preventDefault();e.stopPropagation();var id=SV.swap?2-i:i+1;if(G&&!overlay)action(G.P[id-1]);el.classList.add('down');},{passive:false});
+  el.addEventListener('touchend',function(){el.classList.remove('down');});el.addEventListener('mousedown',function(){var id=SV.swap?2-i:i+1;if(G&&!overlay)action(G.P[id-1]);});});
+function sideLabels(){$('a1').innerHTML='✋<small>'+SV.names[SV.swap?1:0]+'</small>';$('a2').innerHTML='✋<small>'+SV.names[SV.swap?0:1]+'</small>';
+  $('a1').className='act '+(SV.swap?'p2':'p1');$('a2').className='act '+(SV.swap?'p1':'p2');}
+
+/* gamepads: first pad = husband, second = wife */
+var padPrev={};
+function pollPads(){
+  var pads=navigator.getGamepads?navigator.getGamepads():[];var n=0;
+  for(var i=0;i<pads.length;i++){var g=pads[i];if(!g)continue;var id=n+1;n++;if(id>2)break;
+    var ax=g.axes[0]||0,ay=g.axes[1]||0,b=g.buttons,d=null;
+    if(b[12]&&b[12].pressed||ay<-0.5)d='U';else if(b[13]&&b[13].pressed||ay>0.5)d='D';else if(b[14]&&b[14].pressed||ax<-0.5)d='L';else if(b[15]&&b[15].pressed||ax>0.5)d='R';
+    var key='p'+i;if(padPrev[key+'d']!==d){held[id]=d?[d]:[];setHold(id);padPrev[key+'d']=d;}
+    var a=b[0]&&b[0].pressed;if(a&&!padPrev[key+'a']){if(overlay==='done'||overlay==='chapter')setReady(id);else if(G&&!overlay)action(G.P[id-1]);}padPrev[key+'a']=a;}
+}
+
+/* ================= main loop (30 fps is plenty) ================= */
+var last=0,acc=0,manual=false;
+function frame(ts){
+  if(!manual){
+    var dt=Math.min(0.1,(ts-last)/1000||0);
+    if(ts-last>=31){last=ts;pollPads();if(G&&!overlay)update(dt);if(G){layoutIfNeeded();draw();}}
+  }
+  requestAnimationFrame(frame);
+}
+var lastLay='',lastG=null;function layoutIfNeeded(){var k=VW+'x'+VH+':'+G.lvl+':'+G.orig.join('').length+(G===lastG?'':Math.random());lastG=G;if(k!==lastLay){lastLay=k;buildStatic();}}
+addEventListener('resize',function(){resize();});
+
+/* ================= screens wiring ================= */
+function initUI(){
+  $('n1').value=SV.names[0];$('n2').value=SV.names[1];
+  var cols=['#7b5ea7','#2f6f73','#9b3d5a','#3a4f8a','#4a4a4a','#8a6a3a'];
+  $('abaya').innerHTML=cols.map(function(c){return '<button data-c="'+c+'" style="background:'+c+'" class="'+(c===SV.abaya?'on':'')+'" aria-label="Colour"></button>';}).join('');
+  $('abaya').onclick=function(e){var b=e.target.closest('button');if(!b)return;SV.abaya=b.getAttribute('data-c');save();initUI();};
+  $('swap').checked=!!SV.swap;$('snd').checked=!!SV.sound;
+  $('cont').textContent=SV.unlocked>0?'Continue — Task '+Math.min(SV.unlocked+1,LEVELS.length):'Start — Bismillah';
+  sideLabels();
+}
+function saveNames(){SV.names=[($('n1').value||'Husband').slice(0,12),($('n2').value||'Wife').slice(0,12)];SV.swap=$('swap').checked;SV.sound=$('snd').checked;save();sideLabels();}
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-go],[data-lv]');if(!t)return;
+  var lv=t.getAttribute('data-lv');if(lv!==null){startLevel(+lv);return;}
+  var g=t.getAttribute('data-go');
+  if(g==='start'){saveNames();startLevel(Math.min(SV.unlocked,LEVELS.length-1));}
+  else if(g==='select'){saveNames();renderSelect();show('select');}
+  else if(g==='title'){initUI();show('title');}
+  else if(g==='howto')show('howto');
+  else if(g==='resume')show(null);
+  else if(g==='restart'){show(null);resetRoom('Starting this task again.');}
+  else if(g==='pause'){if(G)show('pause');}
+  else if(g==='r1')setReady(SV.swap?2:1);
+  else if(g==='r2')setReady(SV.swap?1:2);
+  else if(g==='c1')setReady(1);
+  else if(g==='c2')setReady(2);
+});
+$('r1').onclick=function(){setReady(1);};$('r2').onclick=function(){setReady(2);};
+$('c1').onclick=function(){setReady(1);};$('c2').onclick=function(){setReady(2);};
+document.body.classList.toggle('touch',isTouch);
+
+resize();initUI();show('title');requestAnimationFrame(frame);
+if('serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('sw.js').catch(function(){});}
+
+/* hooks for automated testing */
+window.HIH={get G(){return G;},load:load,update:update,action:function(id){action(G.P[id-1]);},hold:function(id,d){held[id]=d?[d]:[];setHold(id);},
+  peek:peek,plan:plan,T:T,set manual(v){manual=v;},get overlay(){return overlay;},show:show,setReady:setReady,LEVELS:LEVELS,boxAt:boxAt};
+})();
+</script>
+</body>
+</html>
